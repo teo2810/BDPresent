@@ -106,7 +106,7 @@
     .display i { font-style: normal; color: var(--coral); }
     .lede { color: var(--muted); font-size: 16px; line-height: 1.45; margin: 14px 0 0; }
     .card {
-      margin-top: 10px;
+      margin-top: 8px;
       background: var(--glass);
       border: 1px solid var(--line);
       border-radius: 22px;
@@ -118,7 +118,7 @@
       display: grid;
       grid-template-columns: 28px 1fr;
       gap: 10px;
-      padding: 8px 0 8px;
+      padding: 5px 0;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
     .rule:first-child { border-top: 0; }
@@ -133,9 +133,9 @@
     .rule p { margin: 0; font-size: 14px; line-height: 1.4; }
     .rule strong { font-weight: 700; }
     .cliff {
-      margin-top: 8px;
+      margin-top: 6px;
       border-radius: 18px;
-      padding: 10px 12px;
+      padding: 8px 12px;
       background: rgba(255, 90, 122, 0.08);
       border: 1px solid rgba(255, 90, 122, 0.28);
       color: #ffd0d8;
@@ -147,8 +147,8 @@
       border: 1px solid transparent;
     }
     .primary {
-      margin-top: 14px;
-      min-height: 54px;
+      margin-top: 8px;
+      min-height: 52px;
       width: 100%;
       background: var(--cyan);
       color: var(--ink);
@@ -440,92 +440,66 @@
     .gift-slot img { width: 100%; height: auto; border-radius: 14px; display: block; }
     .gift-slot p { margin: 0; font-size: 16px; line-height: 1.4; }
     .fine { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
-    .invite { position: relative; margin-top: 0; padding-top: 42px; }
-    .invite-balloons {
-      position: absolute;
-      left: 22px;
-      right: 22px;
-      top: 0;
-      height: 78px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      pointer-events: none;
-    }
-    .mini-bal { width: 28px; position: relative; animation: floaty 3.4s ease-in-out infinite; }
-    .mini-bal:nth-child(2) { animation-delay: -0.8s; width: 34px; }
-    .mini-bal:nth-child(3) { animation-delay: -1.6s; }
-    .mini-bal:nth-child(4) { animation-delay: -2.3s; width: 24px; }
-    .mini-bal span {
-      display: block;
-      width: 100%;
-      height: 34px;
-      border-radius: 50% 50% 47% 47% / 42% 42% 58% 58%;
-      background:
-        radial-gradient(ellipse at 32% 28%, rgba(255,255,255,.92), transparent 26%),
-        var(--bc);
-      box-shadow: inset -4px -6px 8px rgba(0,0,0,.18);
-    }
-    .mini-bal:nth-child(2) span { height: 40px; }
-    .mini-bal i {
-      position: absolute;
-      left: 50%;
-      top: 32px;
-      width: 1px;
-      height: 36px;
-      background: rgba(244,247,251,.55);
-    }
-    .mini-bal:nth-child(2) i { top: 38px; height: 30px; }
-    @keyframes floaty {
-      50% { transform: translateY(-5px); }
-    }
     .ticket {
       position: relative;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.5), transparent 26%),
-        #f3eadc;
+        linear-gradient(180deg, rgba(255,255,255,.55), transparent 18%),
+        #f6efe4;
       color: #1c140e;
-      border-radius: 4px 22px 22px 4px;
-      padding: 18px 18px 14px;
-      box-shadow: -9px 0 0 #e2d3bc, 0 22px 40px rgba(0,0,0,.38);
+      border-radius: 8px 26px 26px 8px;
+      padding: 12px 14px 12px;
+      box-shadow: -10px 0 0 #e4d5bd, 0 24px 44px rgba(0,0,0,.4);
     }
-    .ticket::before {
+    .ticket::before, .ticket::after {
       content: "";
       position: absolute;
-      inset: 10px;
-      border: 1px solid rgba(154, 112, 42, .4);
-      border-radius: 2px 14px 14px 2px;
       pointer-events: none;
+      border-radius: 4px 16px 16px 4px;
     }
+    .ticket::before { inset: 7px; border: 1px solid rgba(154, 112, 42, .55); }
+    .ticket::after { inset: 11px; border: 1px solid rgba(154, 112, 42, .28); }
+    .card-sky {
+      position: relative;
+      height: 122px;
+      border-radius: 6px 16px 8px 8px;
+      overflow: hidden;
+      background:
+        radial-gradient(90px 50px at 50% 100%, rgba(245,197,107,.28), transparent 70%),
+        linear-gradient(180deg, #2a3a66 0%, #151c33 78%);
+      margin-bottom: 14px;
+    }
+    .bouquet { width: 100%; height: 100%; display: block; }
     .ticket-kicker {
       margin: 0;
       font-size: 12px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #8d642e;
       font-weight: 750;
     }
     .ticket-hello {
-      margin: 12px 0 0;
-      font-size: 15px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-weight: 750;
-      color: #8d642e;
+      margin: 4px 0 0;
+      font-family: Georgia, "Iowan Old Style", Palatino, serif;
+      font-style: italic;
+      font-size: 18px;
+      letter-spacing: 0.01em;
+      font-weight: 500;
+      color: #8d4538;
     }
     .ticket h1 {
-      margin: 2px 0 0;
-      font-size: clamp(52px, 15vw, 72px);
-      line-height: 0.9;
-      letter-spacing: -0.05em;
-      font-weight: 800;
+      margin: 0;
+      font-family: Georgia, "Iowan Old Style", Palatino, serif;
+      font-size: clamp(46px, 13vw, 64px);
+      line-height: 0.86;
+      letter-spacing: -0.03em;
+      font-weight: 500;
       color: #1c140e;
     }
-    .ticket h1 em { font-style: italic; font-weight: 620; color: #c44762; }
-    .seal-row { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+    .ticket h1 em { font-style: italic; font-weight: 500; color: #c44762; }
+    .seal-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
     .seal {
-      width: 58px;
-      height: 58px;
+      width: 46px;
+      height: 46px;
       flex: none;
       border-radius: 50%;
       display: grid;
@@ -533,13 +507,12 @@
       background: radial-gradient(circle at 34% 30%, #ff9aab, #e23b5b 58%, #9b1d36);
       color: #fff8f3;
       box-shadow: inset 0 -7px 10px rgba(0,0,0,.25), 0 8px 16px rgba(160, 30, 55, .35);
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 800;
       letter-spacing: -0.05em;
     }
     .seal-row p { margin: 0; color: #5c5146; font-size: 14px; line-height: 1.35; }
     .seal-row strong { display: block; color: #1c140e; font-size: 15px; font-weight: 750; }
-    .ticket-note { margin: 14px 0 0; color: #4a4036; font-size: 15px; line-height: 1.4; }
     @media (prefers-reduced-motion: reduce) {
       .shake { animation: none; }
       .pad.lit { transition: none; }
@@ -816,23 +789,82 @@
     const views = {
       welcome() {
         return `
-          <div class="invite">
-            <div class="invite-balloons" aria-hidden="true">
-              <div class="mini-bal" style="--bc:#ff5a7a"><span></span><i></i></div>
-              <div class="mini-bal" style="--bc:#f5c56b"><span></span><i></i></div>
-              <div class="mini-bal" style="--bc:#22d3ee"><span></span><i></i></div>
-              <div class="mini-bal" style="--bc:#3ee0b0"><span></span><i></i></div>
+          <article class="ticket">
+            <div class="card-sky">
+              <svg class="bouquet" viewBox="0 0 360 168" aria-hidden="true">
+                <defs>
+                  <radialGradient id="bCoral" cx="32%" cy="28%" r="72%">
+                    <stop offset="0%" stop-color="#fff7f8"/>
+                    <stop offset="14%" stop-color="#ffc2cf"/>
+                    <stop offset="46%" stop-color="#ff5a7a"/>
+                    <stop offset="100%" stop-color="#b11f42"/>
+                  </radialGradient>
+                  <radialGradient id="bGold" cx="32%" cy="28%" r="72%">
+                    <stop offset="0%" stop-color="#fffdf6"/>
+                    <stop offset="16%" stop-color="#ffe7a8"/>
+                    <stop offset="50%" stop-color="#f5c56b"/>
+                    <stop offset="100%" stop-color="#c4892a"/>
+                  </radialGradient>
+                  <radialGradient id="bCyan" cx="32%" cy="28%" r="72%">
+                    <stop offset="0%" stop-color="#f4feff"/>
+                    <stop offset="16%" stop-color="#b7f4ff"/>
+                    <stop offset="50%" stop-color="#22d3ee"/>
+                    <stop offset="100%" stop-color="#0e8ea8"/>
+                  </radialGradient>
+                  <radialGradient id="bMint" cx="32%" cy="28%" r="72%">
+                    <stop offset="0%" stop-color="#f3fffb"/>
+                    <stop offset="16%" stop-color="#b8ffe6"/>
+                    <stop offset="50%" stop-color="#3ee0b0"/>
+                    <stop offset="100%" stop-color="#14956e"/>
+                  </radialGradient>
+                  <radialGradient id="bRose" cx="32%" cy="28%" r="72%">
+                    <stop offset="0%" stop-color="#fff5fb"/>
+                    <stop offset="18%" stop-color="#ffc4e4"/>
+                    <stop offset="52%" stop-color="#f072b6"/>
+                    <stop offset="100%" stop-color="#b23a78"/>
+                  </radialGradient>
+                </defs>
+                <path d="M62 96 C 90 130, 150 148, 180 160" fill="none" stroke="rgba(244,247,251,.75)" stroke-width="1.3"/>
+                <path d="M112 90 C 130 128, 160 146, 180 160" fill="none" stroke="rgba(244,247,251,.75)" stroke-width="1.3"/>
+                <path d="M180 108 C 180 132, 180 146, 180 160" fill="none" stroke="rgba(244,247,251,.8)" stroke-width="1.4"/>
+                <path d="M250 92 C 230 128, 200 146, 180 160" fill="none" stroke="rgba(244,247,251,.75)" stroke-width="1.3"/>
+                <path d="M304 100 C 270 132, 220 148, 182 160" fill="none" stroke="rgba(244,247,251,.75)" stroke-width="1.3"/>
+                <g>
+                  <ellipse cx="62" cy="62" rx="24" ry="30" fill="url(#bCyan)"/>
+                  <ellipse cx="52" cy="48" rx="8" ry="5" fill="#fff" opacity=".72"/>
+                  <polygon points="62,90 57,98 67,98" fill="#0e8ea8"/>
+                </g>
+                <g>
+                  <ellipse cx="304" cy="70" rx="20" ry="26" fill="url(#bRose)"/>
+                  <ellipse cx="296" cy="58" rx="6" ry="4" fill="#fff" opacity=".7"/>
+                  <polygon points="304,94 300,101 308,101" fill="#b23a78"/>
+                </g>
+                <g>
+                  <ellipse cx="114" cy="54" rx="27" ry="33" fill="url(#bGold)"/>
+                  <ellipse cx="102" cy="38" rx="8" ry="5.5" fill="#fff" opacity=".75"/>
+                  <polygon points="114,85 108,94 120,94" fill="#c4892a"/>
+                </g>
+                <g>
+                  <ellipse cx="250" cy="56" rx="27" ry="33" fill="url(#bMint)"/>
+                  <ellipse cx="238" cy="40" rx="8" ry="5.5" fill="#fff" opacity=".75"/>
+                  <polygon points="250,87 244,96 256,96" fill="#14956e"/>
+                </g>
+                <g>
+                  <ellipse cx="180" cy="64" rx="34" ry="42" fill="url(#bCoral)"/>
+                  <ellipse cx="164" cy="44" rx="10" ry="7" fill="#fff" opacity=".78"/>
+                  <polygon points="180,104 173,114 187,114" fill="#b11f42"/>
+                </g>
+                <path d="M172 158 C 166 150, 160 154, 166 160 C 158 162, 166 170, 176 164 C 180 172, 192 168, 188 160 C 198 162, 196 150, 186 156 C 184 148, 174 150, 172 158 Z" fill="#f5c56b"/>
+              </svg>
             </div>
-            <article class="ticket">
-              <p class="ticket-kicker">19 novembre 1992</p>
-              <p class="ticket-hello">Buon compleanno</p>
-              <h1><em>Marta</em></h1>
-              <div class="seal-row">
-                <div class="seal">34</div>
-                <p><strong>Compie 34 anni.</strong>Cento punti, o il regalo non esiste.</p>
-              </div>
-            </article>
-          </div>
+            <p class="ticket-kicker">19 novembre 1992</p>
+            <p class="ticket-hello">Buon compleanno</p>
+            <h1><em>Marta</em></h1>
+            <div class="seal-row">
+              <div class="seal">34</div>
+              <p><strong>Compie 34 anni.</strong>Cento punti, o il regalo non esiste.</p>
+            </div>
+          </article>
           <div class="card">
             <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Ogni prima risposta sbagliata brucia 5 punti. Puoi riprovare, ma il danno resta.</p></div>
             <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Contano gli scoppi netti, tetto a 30. Le bombe rubano tempo, non perdonano.</p></div>
