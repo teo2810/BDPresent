@@ -232,52 +232,155 @@
       top: 0;
       padding: 0;
       border: 0;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), transparent 24%),
-        radial-gradient(circle at 50% 62%, var(--c), #071018 78%);
-      box-shadow: inset 0 -10px 16px rgba(0,0,0,0.25), 0 10px 18px rgba(0,0,0,0.28);
+      background: transparent;
       touch-action: none;
     }
-    .bal.bomb {
+    .bal .body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 72%;
+      border-radius: 50% 50% 48% 48% / 42% 42% 58% 58%;
       background:
-        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35), transparent 22%),
-        radial-gradient(circle at 50% 60%, #2a121c, #07060a 76%);
-      box-shadow: inset 0 0 0 3px var(--coral), 0 0 0 1px rgba(255,90,122,0.7);
+        radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.95), rgba(255,255,255,0) 22%),
+        radial-gradient(ellipse at 68% 72%, rgba(0,0,0,.22), transparent 46%),
+        var(--c);
+      box-shadow: inset -8px -12px 16px rgba(0,0,0,.2), inset 5px 6px 8px rgba(255,255,255,.4);
     }
-    .bal.bomb::before {
+    .bal .body::after {
       content: "";
       position: absolute;
       left: 50%;
-      top: -8px;
-      width: 3px;
-      height: 12px;
+      bottom: -7px;
+      width: 10px;
+      height: 9px;
+      margin-left: -5px;
+      background: var(--c);
+      filter: brightness(0.62);
+      clip-path: polygon(50% 100%, 8% 0, 92% 0);
+    }
+    .bal .cord {
+      position: absolute;
+      left: 50%;
+      top: 74%;
+      width: 1.5px;
+      height: 24%;
       margin-left: -1px;
-      border-radius: 2px;
+      background: rgba(244,247,251,.7);
+      transform-origin: top center;
+      animation: sway 1.5s ease-in-out infinite;
+    }
+    .bal.popped .body { transform: scale(1.4); opacity: 0; transition: transform .12s ease, opacity .12s ease; }
+    .bal.popped .cord { opacity: 0; }
+    .bal.bomb .body {
+      background:
+        radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.4), rgba(255,255,255,0) 20%),
+        linear-gradient(160deg, #3a2a32, #161018 70%);
+      box-shadow: inset 0 0 0 2px #ff5a7a, inset -6px -10px 12px rgba(0,0,0,.35);
+    }
+    .bal.bomb .body::after { background: #ff5a7a; }
+    .bal.bomb .cord {
+      height: 14%;
       background: var(--gold);
+      box-shadow: 0 0 6px var(--gold);
+      animation: none;
     }
-    .path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
-    .step {
-      aspect-ratio: 1;
-      border-radius: 16px;
+    @keyframes sway {
+      50% { transform: rotate(7deg); }
+    }
+    .bridge-scene {
+      position: relative;
+      height: min(62dvh, 520px);
+      margin-top: 8px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #121a2e 0%, #070b16 70%);
+      border: 1px solid var(--line);
+    }
+    .track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 12px;
+      bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .pair {
+      flex: 1 1 0;
+      min-height: 0;
       display: grid;
-      place-items: center;
-      background: var(--glass);
-      border: 1px solid var(--line);
-      font-weight: 800;
-      letter-spacing: 0.04em;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-    .step.safe { background: var(--cyan); color: var(--ink); border-color: transparent; }
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-    .side {
-      min-height: 132px;
-      background: var(--glass);
-      border: 1px solid var(--line);
-      font-size: 18px;
-      font-weight: 750;
-      letter-spacing: -0.03em;
+    .pane {
+      height: 100%;
+      min-height: 26px;
+      padding: 0;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,.32);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.05) 46%, rgba(34,211,238,.14));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 7px 0 rgba(0,0,0,.28);
     }
-    .side small { display: block; margin-top: 6px; color: var(--muted); font-weight: 650; letter-spacing: 0.12em; font-size: 11px; }
+    .pane:disabled { opacity: 1; }
+    .pane.lit {
+      background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(34,211,238,.8));
+      box-shadow: 0 0 16px rgba(34,211,238,.8), 0 7px 0 rgba(0,0,0,.28);
+    }
+    .pane.current { box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 7px 0 rgba(0,0,0,.28); }
+    .pane.stood {
+      background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(62,224,176,.5));
+    }
+    .pane.shatter {
+      background: rgba(255,90,122,.5);
+      animation: crack .5s ease forwards;
+    }
+    @keyframes crack {
+      50% { transform: scale(1.05); }
+      100% { transform: translateY(18px) scale(.72); opacity: .15; }
+    }
+    .lip {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      bottom: 10px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #2a3348, #151b2a);
+      box-shadow: 0 6px 0 #0a0e16;
+    }
+    .walker {
+      position: absolute;
+      z-index: 4;
+      width: 18px;
+      pointer-events: none;
+      transition: left .22s ease, top .22s ease;
+    }
+    .walker i {
+      display: block;
+      width: 12px;
+      height: 12px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: #f4f7fb;
+    }
+    .walker b {
+      display: block;
+      width: 14px;
+      height: 16px;
+      margin: 1px auto 0;
+      border-radius: 6px 6px 3px 3px;
+      background: var(--cyan);
+    }
+    .walker.fall {
+      transition: transform .5s ease, opacity .5s ease;
+      transform: translateY(48px) rotate(18deg);
+      opacity: 0;
+    }
     .pads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
     .pad {
       min-height: 108px;
@@ -362,16 +465,16 @@ const K3 = [34, 228, 152, 115];
 /*VAULT_END*/
 
     const QUIZ = [
-      { q: "Quale di questi film è diretto da Christopher Nolan?", c: ["Inception", "Avatar", "Titanic", "Gravity"], a: 0 },
-      { q: "Chi ha pubblicato l'album Thriller?", c: ["Prince", "Michael Jackson", "Stevie Wonder", "George Michael"], a: 1 },
-      { q: "Quale metallo è liquido a temperatura ambiente?", c: ["Mercurio", "Ferro", "Rame", "Argento"], a: 0 },
-      { q: "In quale anno è caduto il muro di Berlino?", c: ["1979", "1985", "1989", "1991"], a: 2 },
-      { q: "Quale pianeta chiamano anche stella del mattino?", c: ["Marte", "Venere", "Giove", "Mercurio"], a: 1 },
-      { q: "Chi ha dipinto La notte stellata?", c: ["Claude Monet", "Pablo Picasso", "Vincent van Gogh", "Edvard Munch"], a: 2 },
-      { q: "Su un pianoforte da 88 tasti, quanti sono bianchi?", c: ["36", "44", "52", "56"], a: 2 },
-      { q: "In quale saga compaiono gli Stark di Winterfell?", c: ["Il Signore degli Anelli", "Il Trono di Spade", "The Witcher", "Dune"], a: 1 },
       { q: "Qual è la capitale dell'Australia?", c: ["Sydney", "Melbourne", "Canberra", "Perth"], a: 2 },
-      { q: "Quale particella ha carica elettrica negativa?", c: ["Protone", "Neutrone", "Elettrone", "Fotone"], a: 2 }
+      { q: "Chi canta la canzone Thriller?", c: ["Prince", "Michael Jackson", "Stevie Wonder", "George Michael"], a: 1 },
+      { q: "In quale paese si trova la Torre Eiffel?", c: ["Italia", "Spagna", "Francia", "Belgio"], a: 2 },
+      { q: "Qual è il pianeta più grande del sistema solare?", c: ["Marte", "Venere", "Giove", "Mercurio"], a: 2 },
+      { q: "Di che colore è un rubino?", c: ["Verde", "Rosso", "Blu", "Giallo"], a: 1 },
+      { q: "In quale anno è caduto il muro di Berlino?", c: ["1979", "1985", "1989", "1991"], a: 2 },
+      { q: "Secondo il modo di dire, quale animale ha la memoria corta?", c: ["Elefante", "Pesce rosso", "Gufo", "Delfino"], a: 1 },
+      { q: "Quante zampe ha un ragno?", c: ["6", "8", "10", "12"], a: 1 },
+      { q: "Quale metallo è liquido a temperatura ambiente?", c: ["Mercurio", "Ferro", "Rame", "Argento"], a: 0 },
+      { q: "Da che parte sorge il sole?", c: ["Nord", "Sud", "Est", "Ovest"], a: 2 }
     ];
 
     const GLYPHS = [
@@ -400,7 +503,7 @@ const K3 = [34, 228, 152, 115];
       bridge: {
         kicker: "Prova 3 · Ponte",
         title: "Ponte di vetro",
-        body: "Otto passi, sinistra o destra. Il percorso sicuro resta acceso per un secondo e mezzo. Un errore fa esplodere il vetro e azzera la prova.",
+        body: "Otto lastre di vetro, due per passo. Il lato sicuro si accende per un secondo e mezzo. Poi cammini: un piede sbagliato e il vetro cede.",
         go: "Mostrami il percorso"
       },
       simon: {
@@ -610,37 +713,37 @@ const K3 = [34, 228, 152, 115];
         `;
       },
       bridge() {
-        if (S.bridgePhase === "preview") {
+        if (S.bridgePhase === "dead" || S.bridgePhase === "clear") {
+          const won = S.bridgePhase === "clear";
           return `
-            <div class="qmeta"><span>Memorizza</span><span id="countDown">1.5</span></div>
-            <h2 class="q">Percorso sicuro</h2>
-            <div class="path">
-              ${S.bridge.map((side) => `<div class="step safe">${side === "L" ? "SX" : "DX"}</div>`).join("")}
-            </div>
-            <p class="note">Tra un istante si spegne. Non si torna indietro.</p>
-          `;
-        }
-        if (S.bridgePhase === "dead") {
-          return `
-            <h2 class="q fail-title">Il vetro cede</h2>
-            <p class="lede">Passo ${S.bridgeStep + 1} sbagliato. La prova vale 0.</p>
+            <h2 class="q ${won ? "" : "fail-title"}">${won ? "Ponte attraversato" : "Il vetro cede"}</h2>
+            <p class="lede">${won ? "Quindici punti. Sei dall'altra parte." : "Passo " + (S.bridgeStep + 1) + " sbagliato. La prova vale 0."}</p>
             <button class="primary" type="button" data-act="next" data-next="simon">Avanti</button>
           `;
         }
-        if (S.bridgePhase === "clear") {
-          return `
-            <h2 class="q">Ponte attraversato</h2>
-            <p class="lede">Quindici punti. Il vetro ha retto.</p>
-            <button class="primary" type="button" data-act="next" data-next="simon">Avanti</button>
-          `;
-        }
+        const preview = S.bridgePhase === "preview";
+        const rows = [];
+        for (let i = 7; i >= 0; i--) rows.push(i);
         return `
-          <div class="qmeta"><span>Passo ${S.bridgeStep + 1} / 8</span><span>0 o 15</span></div>
-          <h2 class="q">Quale lastra regge?</h2>
-          <div class="split">
-            <button class="side" type="button" data-act="side" data-side="L">Sinistra<small>SX</small></button>
-            <button class="side" type="button" data-act="side" data-side="R">Destra<small>DX</small></button>
+          <div class="qmeta"><span>${preview ? "Memorizza il ponte" : "Attraversa"}</span><span id="countDown">${preview ? "1.5" : (S.bridgeStep + 1) + " / 8"}</span></div>
+          <div class="bridge-scene" id="bridgeScene">
+            <div class="track">
+              ${rows.map((i) => {
+                const side = S.bridge[i];
+                const width = 92 - i * 6;
+                const active = !preview && i === S.bridgeStep;
+                const pane = (dir) => {
+                  const lit = preview && side === dir ? " lit" : "";
+                  const current = active ? " current" : "";
+                  return `<button class="pane${lit}${current}" type="button" data-act="side" data-side="${dir}" data-step="${i}" ${active ? "" : "disabled"}></button>`;
+                };
+                return `<div class="pair" style="width:${width}%" data-pair="${i}">${pane("L")}${pane("R")}</div>`;
+              }).join("")}
+            </div>
+            <div class="lip" id="lip"></div>
+            <div class="walker" id="walker" hidden><i></i><b></b></div>
           </div>
+          <p class="note" id="bridgeHint">${preview ? "Il vetro sicuro è acceso. Poi si spegne." : "Tocca la lastra su cui mettere il piede."}</p>
         `;
       },
       simon() {
@@ -797,22 +900,25 @@ const K3 = [34, 228, 152, 115];
       const arena = document.getElementById("arena");
       if (!arena) return;
       const bomb = Math.random() < 0.16;
-      const size = bomb ? 56 + Math.random() * 16 : 30 + Math.pow(Math.random(), 1.4) * 72;
+      const size = bomb ? 58 + Math.random() * 18 : 34 + Math.pow(Math.random(), 1.35) * 70;
+      const tall = Math.round(size * 1.34);
       const el = document.createElement("button");
       el.type = "button";
       el.className = "bal" + (bomb ? " bomb" : "");
       el.style.width = size + "px";
-      el.style.height = size + "px";
-      const colors = ["#22d3ee", "#ff5a7a", "#f5c56b", "#3ee0b0"];
-      el.style.setProperty("--c", colors[(Math.random() * colors.length) | 0]);
+      el.style.height = tall + "px";
+      el.innerHTML = '<span class="body"></span><span class="cord"></span>';
+      el.querySelector(".cord").style.animationDuration = (1.2 + Math.random() * 0.8).toFixed(2) + "s";
+      const colors = ["#ff4d6d", "#3ec6ff", "#ffd166", "#5ee0a0", "#ff8a3d"];
+      el.style.setProperty("--c", bomb ? "#241820" : colors[(Math.random() * colors.length) | 0]);
       el.setAttribute("aria-label", bomb ? "Bomba" : "Palloncino");
       const b = {
-        el, bomb, size, alive: true,
+        el, bomb, size, tall, alive: true,
         x: Math.random() * Math.max(8, arena.clientWidth - size),
         y: y,
-        vy: (160 + Math.random() * 120) * (size < 44 ? 1.3 : 1),
+        vy: (150 + Math.random() * 110) * (size < 48 ? 1.28 : 1),
         phase: Math.random() * Math.PI * 2,
-        wobble: 10 + Math.random() * 16
+        wobble: 8 + Math.random() * 14
       };
       arena.appendChild(el);
       balloons.push(b);
@@ -821,8 +927,10 @@ const K3 = [34, 228, 152, 115];
 
     function retire(b) {
       b.alive = false;
-      b.el.remove();
+      b.el.classList.add("popped");
+      const el = b.el;
       balloons = balloons.filter((x) => x !== b);
+      wait(120).then(() => el.remove());
     }
 
     function startBalloons() {
@@ -891,7 +999,7 @@ const K3 = [34, 228, 152, 115];
         if (!b.alive) continue;
         b.y -= b.vy * dt;
         b.phase += dt * 2.5;
-        if (b.y < -b.size - 12) {
+        if (b.y < -b.tall - 12) {
           retire(b);
           continue;
         }
@@ -916,28 +1024,63 @@ const K3 = [34, 228, 152, 115];
       });
     }
 
+    function placeWalkerOn(el) {
+      const scene = document.getElementById("bridgeScene");
+      const walker = document.getElementById("walker");
+      if (!el || !scene || !walker) return;
+      const pr = el.getBoundingClientRect();
+      const sr = scene.getBoundingClientRect();
+      walker.hidden = false;
+      walker.style.left = (pr.left - sr.left + pr.width / 2 - 9) + "px";
+      walker.style.top = (pr.top - sr.top - 26) + "px";
+    }
+
     function chooseBridge(side) {
       if (S.bridgePhase !== "input" || S.lock) return;
-      if (side !== S.bridge[S.bridgeStep]) {
-        S.lock = true;
-        S.bridgePhase = "dead";
-        S.scores.bridge = 0;
-        S.bridgeClosed = true;
+      const step = S.bridgeStep;
+      const ok = side === S.bridge[step];
+      S.lock = true;
+      const pane = document.querySelector(`.pane[data-step="${step}"][data-side="${side}"]`);
+      placeWalkerOn(pane);
+      if (!ok) {
+        pane?.classList.add("shatter");
+        document.getElementById("walker")?.classList.add("fall");
         tone(90, 0.2, "square", 0.05);
-        paint();
+        const epoch = S.epoch;
+        wait(680).then(() => {
+          if (epoch !== S.epoch) return;
+          S.bridgePhase = "dead";
+          S.scores.bridge = 0;
+          S.bridgeClosed = true;
+          paint();
+        });
         return;
       }
+      pane?.classList.add("stood");
       tone(540, 0.05, "sine", 0.04);
-      S.bridgeStep += 1;
-      if (S.bridgeStep >= 8) {
-        S.scores.bridge = 15;
-        S.bridgeClosed = true;
-        S.bridgePhase = "clear";
-        tone(980, 0.1, "sine", 0.05);
-        paint();
-        return;
-      }
-      paint();
+      const epoch = S.epoch;
+      wait(230).then(() => {
+        if (epoch !== S.epoch) return;
+        S.bridgeStep += 1;
+        if (S.bridgeStep >= 8) {
+          S.scores.bridge = 15;
+          S.bridgeClosed = true;
+          S.bridgePhase = "clear";
+          paint();
+          return;
+        }
+        document.querySelectorAll(".pane.current").forEach((el) => {
+          el.classList.remove("current");
+          el.disabled = true;
+        });
+        document.querySelectorAll(`.pane[data-step="${S.bridgeStep}"]`).forEach((el) => {
+          el.disabled = false;
+          el.classList.add("current");
+        });
+        const cd = document.getElementById("countDown");
+        if (cd) cd.textContent = (S.bridgeStep + 1) + " / 8";
+        S.lock = false;
+      });
     }
 
     function nextFrom(name) {
@@ -1188,7 +1331,16 @@ const K3 = [34, 228, 152, 115];
       if (S.screen === "bridge" && S.bridgePhase === "preview") {
         if (now >= S.bridgePreviewUntil) {
           S.bridgePhase = "input";
-          paint();
+          document.querySelectorAll(".pane.lit").forEach((el) => el.classList.remove("lit"));
+          document.querySelectorAll('.pane[data-step="0"]').forEach((el) => {
+            el.disabled = false;
+            el.classList.add("current");
+          });
+          const cd = document.getElementById("countDown");
+          if (cd) cd.textContent = "1 / 8";
+          const hint = document.getElementById("bridgeHint");
+          if (hint) hint.textContent = "Tocca la lastra su cui mettere il piede.";
+          placeWalkerOn(document.getElementById("lip"));
         } else {
           const node = document.getElementById("countDown");
           if (node && S.bridgePreviewUntil < Infinity) {
