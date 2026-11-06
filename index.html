@@ -106,7 +106,7 @@
     .display i { font-style: normal; color: var(--coral); }
     .lede { color: var(--muted); font-size: 16px; line-height: 1.45; margin: 14px 0 0; }
     .card {
-      margin-top: 16px;
+      margin-top: 10px;
       background: var(--glass);
       border: 1px solid var(--line);
       border-radius: 22px;
@@ -118,7 +118,7 @@
       display: grid;
       grid-template-columns: 28px 1fr;
       gap: 10px;
-      padding: 10px 0 12px;
+      padding: 8px 0 8px;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
     .rule:first-child { border-top: 0; }
@@ -133,9 +133,9 @@
     .rule p { margin: 0; font-size: 14px; line-height: 1.4; }
     .rule strong { font-weight: 700; }
     .cliff {
-      margin-top: 12px;
+      margin-top: 8px;
       border-radius: 18px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: rgba(255, 90, 122, 0.08);
       border: 1px solid rgba(255, 90, 122, 0.28);
       color: #ffd0d8;
@@ -147,7 +147,7 @@
       border: 1px solid transparent;
     }
     .primary {
-      margin-top: 16px;
+      margin-top: 14px;
       min-height: 54px;
       width: 100%;
       background: var(--cyan);
@@ -427,9 +427,102 @@
       background: #fff;
     }
     .fine { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+    .invite { position: relative; margin-top: 0; padding-top: 42px; }
+    .invite-balloons {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 0;
+      height: 78px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    .mini-bal { width: 28px; position: relative; animation: floaty 3.4s ease-in-out infinite; }
+    .mini-bal:nth-child(2) { animation-delay: -0.8s; width: 34px; }
+    .mini-bal:nth-child(3) { animation-delay: -1.6s; }
+    .mini-bal:nth-child(4) { animation-delay: -2.3s; width: 24px; }
+    .mini-bal span {
+      display: block;
+      width: 100%;
+      height: 34px;
+      border-radius: 50% 50% 47% 47% / 42% 42% 58% 58%;
+      background:
+        radial-gradient(ellipse at 32% 28%, rgba(255,255,255,.92), transparent 26%),
+        var(--bc);
+      box-shadow: inset -4px -6px 8px rgba(0,0,0,.18);
+    }
+    .mini-bal:nth-child(2) span { height: 40px; }
+    .mini-bal i {
+      position: absolute;
+      left: 50%;
+      top: 32px;
+      width: 1px;
+      height: 36px;
+      background: rgba(244,247,251,.55);
+    }
+    .mini-bal:nth-child(2) i { top: 38px; height: 30px; }
+    @keyframes floaty {
+      50% { transform: translateY(-5px); }
+    }
+    .ticket {
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.5), transparent 26%),
+        #f3eadc;
+      color: #1c140e;
+      border-radius: 4px 22px 22px 4px;
+      padding: 18px 18px 14px;
+      box-shadow: -9px 0 0 #e2d3bc, 0 22px 40px rgba(0,0,0,.38);
+    }
+    .ticket::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(154, 112, 42, .4);
+      border-radius: 2px 14px 14px 2px;
+      pointer-events: none;
+    }
+    .ticket-kicker {
+      margin: 0;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #8d642e;
+      font-weight: 750;
+    }
+    .ticket h1 {
+      margin: 6px 0 0;
+      font-size: clamp(44px, 12vw, 60px);
+      line-height: 0.86;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      color: #1c140e;
+    }
+    .ticket h1 em { font-style: italic; font-weight: 620; color: #c44762; }
+    .seal-row { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+    .seal {
+      width: 58px;
+      height: 58px;
+      flex: none;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 34% 30%, #ff9aab, #e23b5b 58%, #9b1d36);
+      color: #fff8f3;
+      box-shadow: inset 0 -7px 10px rgba(0,0,0,.25), 0 8px 16px rgba(160, 30, 55, .35);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+    .seal-row p { margin: 0; color: #5c5146; font-size: 14px; line-height: 1.35; }
+    .seal-row strong { display: block; color: #1c140e; font-size: 15px; font-weight: 750; }
+    .ticket-note { margin: 14px 0 0; color: #4a4036; font-size: 15px; line-height: 1.4; }
     @media (prefers-reduced-motion: reduce) {
       .shake { animation: none; }
       .pad.lit { transition: none; }
+      .mini-bal { animation: none; }
     }
   </style>
 </head>
@@ -521,7 +614,7 @@ const K3 = [34, 228, 152, 115];
     };
 
     const LABELS = {
-      welcome: "Regole",
+      welcome: "19 novembre",
       quiz: "Quiz di cultura",
       ready: "In posizione",
       balloons: "Palloncini",
@@ -668,8 +761,22 @@ const K3 = [34, 228, 152, 115];
     const views = {
       welcome() {
         return `
-          <h1 class="display">CENTO<br>O <i>NIENTE</i></h1>
-          <p class="lede">Dieci domande, una raffica di palloncini, tre prove di memoria. Sotto i 100 punti il regalo non esiste e si ricomincia da zero.</p>
+          <div class="invite">
+            <div class="invite-balloons" aria-hidden="true">
+              <div class="mini-bal" style="--bc:#ff5a7a"><span></span><i></i></div>
+              <div class="mini-bal" style="--bc:#f5c56b"><span></span><i></i></div>
+              <div class="mini-bal" style="--bc:#22d3ee"><span></span><i></i></div>
+              <div class="mini-bal" style="--bc:#3ee0b0"><span></span><i></i></div>
+            </div>
+            <article class="ticket">
+              <p class="ticket-kicker">19 novembre 1992</p>
+              <h1>Buon<br><em>compleanno</em></h1>
+              <div class="seal-row">
+                <div class="seal">34</div>
+                <p><strong>Compie 34 anni.</strong>Cento punti, o il regalo non esiste.</p>
+              </div>
+            </article>
+          </div>
           <div class="card">
             <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Ogni prima risposta sbagliata brucia 5 punti. Puoi riprovare, ma il danno resta.</p></div>
             <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Contano gli scoppi netti, tetto a 30. Le bombe rubano tempo, non perdonano.</p></div>
