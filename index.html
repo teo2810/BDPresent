@@ -393,13 +393,20 @@
     .pad.lit { opacity: 1; transform: scale(0.98); filter: brightness(1.15); }
     .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
     .cell {
+      position: relative;
       aspect-ratio: 1;
-      background: var(--glass);
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        var(--glass);
       border: 1px solid var(--line);
       color: var(--cyan);
-      padding: 6px;
+      padding: 0;
+      overflow: hidden;
     }
-    .cell svg { width: 100%; height: 100%; }
+    .cell .mess, .cell .mark { position: absolute; inset: 2px; }
+    .cell svg { width: 100%; height: 100%; display: block; }
+    .cell .mark { filter: drop-shadow(0 0 4px rgba(34,211,238,.9)); }
+    .cell:disabled { opacity: 1; }
     .cell.on { background: rgba(34, 211, 238, 0.18); border-color: var(--cyan); }
     .cell.hitcell { background: rgba(62, 224, 176, 0.16); border-color: var(--mint); color: var(--mint); }
     .cell.misscell { background: rgba(255, 90, 122, 0.12); border-color: var(--coral); color: var(--coral); }
@@ -418,14 +425,20 @@
     .total-line strong { font-size: 42px; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
     .fail-title { color: var(--coral); }
     .win-title { color: var(--gold); }
-    #giftFrame {
-      width: 100%;
-      height: 280px;
-      border: 1px solid var(--line);
+    .gift-slot {
+      margin-top: 14px;
+      min-height: 180px;
       border-radius: 18px;
-      margin-top: 12px;
-      background: #fff;
+      border: 1px dashed rgba(245, 197, 107, 0.45);
+      background: rgba(245, 197, 107, 0.06);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 16px;
+      color: var(--gold);
     }
+    .gift-slot img { width: 100%; height: auto; border-radius: 14px; display: block; }
+    .gift-slot p { margin: 0; font-size: 16px; line-height: 1.4; }
     .fine { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
     .invite { position: relative; margin-top: 0; padding-top: 42px; }
     .invite-balloons {
@@ -557,13 +570,7 @@
     <div id="stage"></div>
   </div>
   <script>
-    /*VAULT_START*/
-const VAULT = "PU9KkwdWwSty8c+XAov6GRIjMvUFM5ZvHeDA5EOQ+R93eC76egaIegvg3YcSxMpTJiEEsEQDgH0Syt2HEsT3EXIVMukKSLtmCKXPiHKF/xZrPyGeQwOcPyPzz5cCtsVTN1xhoEQTzy5Y/tGtR4r8HHp1BOYKV89wGqrlmx7Etydhb2v1BTeOeB3gwPdDlv0dbD889RpHvT9XjYrDS4XaHGA/VeUKV88qQfXPnxbWxVM3XGG7XgKBawvg24cSxMpTN01rpkUSnXwds8+bHsS3NXdxevUWW88wPvHPkgLUuCE4ITD1FFnPIUbKislGi/oZEisu5QoIjXVy/NOHDaj9HX9rZvUeUdk/Rv7l1FaW/RJ1FT77GlXbP0ju35QXxKhdKCg29VgA5S9Y8M+SG9G4SywtLqdPR4kVSO7elBHEqF0gLTn1GknWLEvgncAo0KBTLyw+9RtU3T9M4J3CAoKSQzYmO+IKV8EmTvnPlwzdoEc4bWnfaDPlMD7xz5UaxMwVEi4u5QpXzy5Y9NeHFN2oU0xyBP1pIqFLN+Cgh2yt3T1MWif1fg3lMD7xz5YUxMwVEi4u5QpXzy5Y9NeHFNCoU0xyBP1pAs9zX6iOzgKC+QdsfiD8CjOFFVeG3ocT0LgnfhU/9RpH3z9J4NufAtKoSzhLY98CLoM/CqWIxk6LuLCwP3qgRUnGPyyq5Yhk1bhCKj9asyBWzy9Y8M+WAtCgUy0pPvV+CuU3O6WB003E6AZ2a2f7CimKbAu1gcgCl/scdmth+wNHu3Vy76mWAtWpU0x5BOQKV88vWPHPkxrErUEoP1q4IE++ah2zm8YClPkUcXFv9enPz3YU4JzCRYr5A3dseroKA4pzWLKKwEOI910xP1q/IEipLljx3od2gpJCOC8u5QpWzytA4NqXEsTMHhI3Tb1DR4d+WKyOh1GC8Rd5P320CgSAbBnggsJWkP0Be3YutEZHn3ALtICJC8TMGRJaWt9PCYtsDLKKxk/u/R18cGy/IFLPL1ivjc0o2KRTN0t3pU9HwFkXrpuHDbftEWxmfrAKSLtmCKXehw2m+QB9WWG7XkfAVx2smcJWjfsSODBLu0kIi3YWp8+IdY32MnZsZ5BEBIB7Ea6IhxzakhZ2e2G3QG2XbR2m5ZcC0pJDKC8+5RpX3y9I4NmSF9etU34/BOUaV98vSPDflxvEqEMoLz71REflL0jw35cS1KhGID8+5RpX3z8W4OWXEtSoQygvP+QfR98vSPDfh0zEkkMoLz7lGlfdK0ng35cS1KhTdj8E5RpX3y9I8NiSFcSoQygvPvVER+VrCqGGy0eWkk8kPyGGQx2KP07gwPVNi+xTKT8+9XhH0SFys5vGUJDgAX15BO0fU+U6XYWg4Sg=";
-const K0 = [24, 31, 14, 213];
-const K1 = [42, 103, 239, 31];
-const K2 = [120, 192, 239, 167];
-const K3 = [34, 228, 152, 115];
-/*VAULT_END*/
+    const GIFT_IMAGE = "";
 
     const QUIZ = [
       { q: "Qual è la capitale dell'Australia?", c: ["Sydney", "Melbourne", "Canberra", "Perth"], a: 2 },
@@ -594,6 +601,47 @@ const K3 = [34, 228, 152, 115];
       { name: "Menta", color: "#3ee0b0" }
     ];
 
+    const SONG = [
+      { pad: 0, f: 392, ioi: 280 },
+      { pad: 0, f: 392, ioi: 280 },
+      { pad: 1, f: 440, ioi: 520 },
+      { pad: 0, f: 392, ioi: 520 },
+      { pad: 2, f: 523.25, ioi: 520 },
+      { pad: 3, f: 493.88, ioi: 900 }
+    ];
+    const PAD_FREQ = [392, 440, 523.25, 493.88];
+
+    function messSvg(i) {
+      let n = (S.matrixSalt ^ Math.imul(i + 1, 374761393)) >>> 0;
+      const rnd = () => {
+        n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
+        return n / 4294967296;
+      };
+      const parts = [];
+      const lines = 5 + ((rnd() * 3) | 0);
+      for (let k = 0; k < lines; k++) {
+        const x1 = (4 + rnd() * 40).toFixed(1);
+        const y1 = (4 + rnd() * 40).toFixed(1);
+        const x2 = (4 + rnd() * 40).toFixed(1);
+        const y2 = (4 + rnd() * 40).toFixed(1);
+        const o = (0.25 + rnd() * 0.35).toFixed(2);
+        parts.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(244,247,251,${o})" stroke-width="${(1 + rnd()).toFixed(1)}"/>`);
+      }
+      for (let k = 0; k < 3; k++) {
+        parts.push(`<circle cx="${(8 + rnd() * 32).toFixed(1)}" cy="${(8 + rnd() * 32).toFixed(1)}" r="${(1.2 + rnd() * 2.2).toFixed(1)}" fill="rgba(180,190,210,0.55)"/>`);
+      }
+      const kind = rnd();
+      if (kind < 0.34) parts.push(`<rect x="14" y="14" width="16" height="16" fill="none" stroke="rgba(34,211,238,0.35)" stroke-width="1.6" transform="rotate(${(rnd() * 50).toFixed(0)} 24 24)"/>`);
+      else if (kind < 0.67) parts.push(`<circle cx="24" cy="24" r="${(7 + rnd() * 6).toFixed(1)}" fill="none" stroke="rgba(255,90,122,0.35)" stroke-width="1.6"/>`);
+      else parts.push(`<path d="M24 11 L36 36 H12 Z" fill="none" stroke="rgba(245,197,107,0.4)" stroke-width="1.6"/>`);
+      return `<svg viewBox="0 0 48 48" aria-hidden="true">${parts.join("")}</svg>`;
+    }
+
+    function cellFace(i, showMark) {
+      const mark = showMark ? `<span class="mark">${GLYPHS[S.matrixOn.indexOf(i) % GLYPHS.length]}</span>` : "";
+      return `<span class="mess">${messSvg(i)}</span>${mark}`;
+    }
+
     const READY = {
       balloons: {
         kicker: "Prova 2",
@@ -610,13 +658,13 @@ const K3 = [34, 228, 152, 115];
       simon: {
         kicker: "Prova 3 · Colori",
         title: "Sequenza",
-        body: "Sei colori, 600 millisecondi ciascuno. Poi ripetili nell'ordine, senza sbagliare.",
+        body: "Una frase allo xilofono, col ritmo di tanti auguri. Non è un lampo regolare. Poi ripeti le note, senza sbagliarne una.",
         go: "Accendi la sequenza"
       },
       matrix: {
         kicker: "Prova 3 · Griglia",
         title: "Simboli nascosti",
-        body: "Sei simboli su sedici caselle, visibili per 1,5 secondi. Ritrovali. Due punti a simbolo, più tre se li prendi tutti.",
+        body: "Tutte le caselle sono già piene di segni. Per 1,5 secondi sei simboli veri si accendono sopra. Poi restano solo i segni: ritrova le sei caselle.",
         go: "Mostra la griglia"
       }
     };
@@ -636,7 +684,6 @@ const K3 = [34, 228, 152, 115];
     let balloons = [];
     let audioCtx = null;
     let celebrated = false;
-    let giftUrl = "";
 
     function fresh() {
       return {
@@ -878,9 +925,9 @@ const K3 = [34, 228, 152, 115];
           `;
         }
         return `
-          <div class="qmeta"><span>Sei lampi</span><span>600 ms</span></div>
-          <h2 class="q">Ripeti i colori</h2>
-          <p class="note" id="simonNote">${S.simonPhase === "play" ? "Guarda. Non toccare ancora." : "Tocca la sequenza."}</p>
+          <div class="qmeta"><span>Xilofono</span><span>Tanti auguri</span></div>
+          <h2 class="q">Ripeti le note</h2>
+          <p class="note" id="simonNote">${S.simonPhase === "play" ? "Ascolta. Non toccare ancora." : "Tocca le note, nello stesso ordine."}</p>
           <div class="pads">
             ${PADS.map((p, i) => `<button class="pad" type="button" data-act="pad" data-pad="${i}" style="background:${p.color}">${p.name}</button>`).join("")}
           </div>
@@ -896,7 +943,7 @@ const K3 = [34, 228, 152, 115];
                 const wanted = S.matrixOn.includes(i);
                 const picked = S.matrixPick.includes(i);
                 const cls = wanted && picked ? "hitcell" : picked && !wanted ? "misscell" : wanted ? "hitcell" : "";
-                const glyph = wanted ? GLYPHS[S.matrixOn.indexOf(i) % GLYPHS.length] : "";
+                const glyph = cellFace(i, wanted);
                 return `<div class="cell ${cls}">${glyph}</div>`;
               }).join("")}
             </div>
@@ -906,16 +953,15 @@ const K3 = [34, 228, 152, 115];
         const show = S.matrixPhase === "show";
         return `
           <div class="qmeta"><span>${show ? "Memorizza" : "Ritrova"}</span><span id="${show ? "countDown" : "pickCount"}">${show ? "1.5" : S.matrixPick.length + " / 6"}</span></div>
-          <h2 class="q">${show ? "Dove sono?" : "Sei caselle"}</h2>
+          <h2 class="q">${show ? "Quali si accendono?" : "Ritrova le sei"}</h2>
           <div class="grid4">
             ${Array.from({ length: 16 }, (_, i) => {
               const on = S.matrixOn.includes(i);
               const picked = S.matrixPick.includes(i);
-              const glyph = show && on ? GLYPHS[S.matrixOn.indexOf(i) % GLYPHS.length] : "";
-              return `<button class="cell${picked ? " on" : ""}" type="button" data-act="cell" data-cell="${i}" ${show ? "disabled" : ""}>${glyph}</button>`;
+              return `<button class="cell${picked ? " on" : ""}" type="button" data-act="cell" data-cell="${i}" ${show ? "disabled" : ""}>${cellFace(i, show && on)}</button>`;
             }).join("")}
           </div>
-          ${show ? `<p class="note">Si spengono da soli.</p>` : `<button class="primary" id="confirm" type="button" data-act="confirm" ${S.matrixPick.length === 6 ? "" : "disabled"}>Conferma</button>`}
+          ${show ? `<p class="note">I simboli si spengono. I segni restano.</p>` : `<button class="primary" id="confirm" type="button" data-act="confirm" ${S.matrixPick.length === 6 ? "" : "disabled"}>Conferma</button>`}
         `;
       },
       final() {
@@ -935,11 +981,10 @@ const K3 = [34, 228, 152, 115];
             ${rows.map(([name, val, max]) => `<tr><td>${name}</td><td>${val} / ${max}</td></tr>`).join("")}
           </table>
           <div class="total-line"><span>Totale</span><strong>${total()}</strong></div>
-          ${won ? `
-            <button class="primary" type="button" data-act="download">Scarica il tuo Regalo</button>
-            <iframe id="giftFrame" title="Regalo"></iframe>
-            <p class="fine">Su iPhone, se il file non si salva da solo, apri l'anteprima e usa Condividi.</p>
-          ` : `<button class="primary" type="button" data-act="reset">Ricomincia da capo</button>`}
+          ${won ? (GIFT_IMAGE
+            ? `<div class="gift-slot"><img src="${GIFT_IMAGE}" alt="Regalo per Marta"></div>`
+            : `<div class="gift-slot"><p>Buon compleanno, Marta.</p></div>`)
+          : `<button class="primary" type="button" data-act="reset">Ricomincia da capo</button>`}
         `;
       }
     };
@@ -1207,8 +1252,27 @@ const K3 = [34, 228, 152, 115];
       paint();
     }
 
+    function xylo(freq, dur) {
+      if (S.mute || !audioCtx) return;
+      const t = audioCtx.currentTime;
+      const partials = [1, 2.76, 5.4];
+      const levels = [0.09, 0.035, 0.012];
+      partials.forEach((m, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq * m;
+        g.gain.setValueAtTime(levels[i], t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(t);
+        o.stop(t + dur + 0.02);
+      });
+    }
+
     function startSimon() {
-      S.simon = Array.from({ length: 6 }, () => (Math.random() * 4) | 0);
+      S.simon = SONG.map((n) => n.pad);
       S.simonInput = 0;
       S.simonPhase = "play";
       S.lock = false;
@@ -1220,18 +1284,18 @@ const K3 = [34, 228, 152, 115];
 
     async function runSimon(token) {
       await wait(420);
-      for (const pad of S.simon) {
+      for (const note of SONG) {
         if (token !== S.simonToken || S.screen !== "simon") return;
-        light(pad, true);
-        tone(420 + pad * 120, 0.16, "sine", 0.05);
-        await wait(600);
-        light(pad, false);
-        await wait(150);
+        light(note.pad, true);
+        xylo(note.f, Math.min(0.45, note.ioi / 1000));
+        await wait(Math.max(80, note.ioi - 60));
+        light(note.pad, false);
+        await wait(60);
       }
       if (token !== S.simonToken || S.screen !== "simon") return;
       S.simonPhase = "input";
-      const note = document.getElementById("simonNote");
-      if (note) note.textContent = "Tocca la sequenza.";
+      const el = document.getElementById("simonNote");
+      if (el) el.textContent = "Tocca le note, nello stesso ordine.";
     }
 
     function light(i, on) {
@@ -1242,7 +1306,7 @@ const K3 = [34, 228, 152, 115];
       if (S.simonPhase !== "input" || S.lock) return;
       light(i, true);
       wait(110).then(() => light(i, false));
-      tone(420 + i * 120, 0.1, "sine", 0.045);
+      xylo(PAD_FREQ[i], 0.22);
       if (S.simon[S.simonInput] !== i) {
         S.lock = true;
         S.simonPhase = "dead";
@@ -1273,6 +1337,7 @@ const K3 = [34, 228, 152, 115];
         pool[j] = tmp;
       }
       S.matrixOn = pool.slice(0, 6);
+      S.matrixSalt = (Math.random() * 1e9) | 0;
       S.matrixPick = [];
       S.matrixPhase = "show";
       S.matrixUntil = Infinity;
@@ -1316,41 +1381,10 @@ const K3 = [34, 228, 152, 115];
       clearBalloons();
       S.screen = "final";
       paint();
-      if (total() >= 100) {
-        mountGift();
-        if (!celebrated) {
-          celebrated = true;
-          celebrate();
-        }
+      if (total() >= 100 && !celebrated) {
+        celebrated = true;
+        celebrate();
       }
-    }
-
-    function giftBytes() {
-      const raw = Uint8Array.from(atob(VAULT), (c) => c.charCodeAt(0));
-      const key = new Uint8Array([...K0, ...K1, ...K2, ...K3]);
-      const out = new Uint8Array(raw.length);
-      for (let i = 0; i < raw.length; i++) out[i] = raw[i] ^ key[i % key.length];
-      return out;
-    }
-
-    function mountGift() {
-      if (!VAULT || total() < 100) return;
-      const blob = new Blob([giftBytes()], { type: "application/pdf" });
-      if (giftUrl) URL.revokeObjectURL(giftUrl);
-      giftUrl = URL.createObjectURL(blob);
-      const frame = document.getElementById("giftFrame");
-      if (frame) frame.src = giftUrl;
-    }
-
-    function downloadGift() {
-      if (total() < 100 || !VAULT) return;
-      if (!giftUrl) mountGift();
-      const a = document.createElement("a");
-      a.href = giftUrl;
-      a.download = "regalo.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
     }
 
     function celebrate() {
@@ -1388,8 +1422,6 @@ const K3 = [34, 228, 152, 115];
     }
 
     function hardReset() {
-      if (giftUrl) URL.revokeObjectURL(giftUrl);
-      giftUrl = "";
       celebrated = false;
       clearBalloons();
       const mute = S.mute;
@@ -1415,7 +1447,6 @@ const K3 = [34, 228, 152, 115];
       else if (act === "cell") toggleCell(Number(btn.dataset.cell));
       else if (act === "confirm") confirmMatrix();
       else if (act === "finish") finish();
-      else if (act === "download") downloadGift();
       else if (act === "reset") hardReset();
     });
 
