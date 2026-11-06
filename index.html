@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#060914" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Cento o niente</title>
+  <style>
+    :root {
+      --bg: #060914;
+      --fg: #f4f7fb;
+      --muted: #93a0b8;
+      --line: rgba(255, 255, 255, 0.12);
+      --glass: rgba(255, 255, 255, 0.06);
+      --cyan: #22d3ee;
+      --coral: #ff5a7a;
+      --gold: #f5c56b;
+      --mint: #3ee0b0;
+      --ink: #041018;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      min-height: 100dvh;
+      background:
+        radial-gradient(900px 420px at 50% -12%, rgba(34, 211, 238, 0.16), transparent 60%),
+        var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    button { font: inherit; color: inherit; }
+    .app {
+      width: min(480px, 100%);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: calc(10px + var(--safe-top)) 16px calc(96px + var(--safe-bot));
+    }
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+    }
+    .kicker {
+      margin: 0;
+      color: var(--cyan);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    #phaseLabel { margin: 2px 0 0; font-size: 15px; font-weight: 650; letter-spacing: -0.02em; }
+    .hud-right { display: flex; align-items: center; gap: 8px; }
+    .scorebox { text-align: right; }
+    .scorebox strong {
+      display: block;
+      font-size: 30px;
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+      font-weight: 760;
+    }
+    .scorebox span {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .scorebox.hot strong { color: var(--gold); }
+    .scorebox.cold strong { color: var(--coral); }
+    #mute {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+    #mute svg { width: 18px; height: 18px; display: block; }
+    #stage {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .display {
+      margin: 8px 0 0;
+      font-size: clamp(46px, 14vw, 68px);
+      line-height: 0.86;
+      letter-spacing: -0.055em;
+      font-weight: 800;
+    }
+    .display i { font-style: normal; color: var(--coral); }
+    .lede { color: var(--muted); font-size: 16px; line-height: 1.45; margin: 14px 0 0; }
+    .card {
+      margin-top: 16px;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px 14px 6px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .rule {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      padding: 10px 0 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .rule:first-child { border-top: 0; }
+    .n {
+      width: 28px; height: 28px; border-radius: 9px;
+      display: grid; place-items: center;
+      background: rgba(34, 211, 238, 0.14);
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .rule p { margin: 0; font-size: 14px; line-height: 1.4; }
+    .rule strong { font-weight: 700; }
+    .cliff {
+      margin-top: 12px;
+      border-radius: 18px;
+      padding: 12px 14px;
+      background: rgba(255, 90, 122, 0.08);
+      border: 1px solid rgba(255, 90, 122, 0.28);
+      color: #ffd0d8;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    .primary, .ghost, .choice, .side, .pad, .cell, .confirm {
+      border-radius: 16px;
+      border: 1px solid transparent;
+    }
+    .primary {
+      margin-top: 16px;
+      min-height: 54px;
+      width: 100%;
+      background: var(--cyan);
+      color: var(--ink);
+      font-weight: 760;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .primary:disabled { opacity: 0.4; }
+    .ghost {
+      margin-top: 10px;
+      min-height: 48px;
+      width: 100%;
+      background: transparent;
+      border-color: var(--line);
+      color: var(--fg);
+      font-weight: 650;
+    }
+    .qmeta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .qmeta b { color: var(--fg); font-weight: 750; }
+    h2.q {
+      margin: 12px 0 14px;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      font-weight: 750;
+    }
+    .choice {
+      width: 100%;
+      text-align: left;
+      min-height: 52px;
+      margin-bottom: 8px;
+      padding: 12px 14px;
+      background: var(--glass);
+      border-color: var(--line);
+      font-size: 16px;
+      font-weight: 620;
+    }
+    .choice.good { background: rgba(62, 224, 176, 0.16); border-color: var(--mint); color: var(--mint); }
+    .choice.bad { background: rgba(255, 90, 122, 0.12); border-color: var(--coral); color: #ffb3c0; }
+    .shake { animation: shake 0.36s ease; }
+    @keyframes shake {
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(3px); }
+    }
+    .arena-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+    .timerow { display: flex; justify-content: space-between; align-items: baseline; }
+    .timerow strong {
+      font-size: 34px;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+    }
+    .bar { height: 4px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 100%; background: var(--cyan); transform-origin: left center; }
+    .arena {
+      position: relative;
+      flex: 1;
+      min-height: 360px;
+      border-radius: 28px;
+      overflow: hidden;
+      touch-action: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
+        rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+    }
+    .arena.hit { box-shadow: inset 0 0 0 2px var(--coral); }
+    .bal {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), transparent 24%),
+        radial-gradient(circle at 50% 62%, var(--c), #071018 78%);
+      box-shadow: inset 0 -10px 16px rgba(0,0,0,0.25), 0 10px 18px rgba(0,0,0,0.28);
+      touch-action: none;
+    }
+    .bal.bomb {
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.35), transparent 22%),
+        radial-gradient(circle at 50% 60%, #2a121c, #07060a 76%);
+      box-shadow: inset 0 0 0 3px var(--coral), 0 0 0 1px rgba(255,90,122,0.7);
+    }
+    .bal.bomb::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -8px;
+      width: 3px;
+      height: 12px;
+      margin-left: -1px;
+      border-radius: 2px;
+      background: var(--gold);
+    }
+    .path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+    .step {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .step.safe { background: var(--cyan); color: var(--ink); border-color: transparent; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .side {
+      min-height: 132px;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      font-size: 18px;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+    }
+    .side small { display: block; margin-top: 6px; color: var(--muted); font-weight: 650; letter-spacing: 0.12em; font-size: 11px; }
+    .pads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .pad {
+      min-height: 108px;
+      font-weight: 760;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      border: 0;
+      opacity: 0.78;
+    }
+    .pad.lit { opacity: 1; transform: scale(0.98); filter: brightness(1.15); }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+    .cell {
+      aspect-ratio: 1;
+      background: var(--glass);
+      border: 1px solid var(--line);
+      color: var(--cyan);
+      padding: 6px;
+    }
+    .cell svg { width: 100%; height: 100%; }
+    .cell.on { background: rgba(34, 211, 238, 0.18); border-color: var(--cyan); }
+    .cell.hitcell { background: rgba(62, 224, 176, 0.16); border-color: var(--mint); color: var(--mint); }
+    .cell.misscell { background: rgba(255, 90, 122, 0.12); border-color: var(--coral); color: var(--coral); }
+    .note { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 8px 0 0; }
+    .count {
+      margin-top: 12px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 750;
+      letter-spacing: -0.04em;
+      font-size: 22px;
+    }
+    .break { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .break td { padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 15px; }
+    .break td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 720; }
+    .total-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; }
+    .total-line strong { font-size: 42px; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+    .fail-title { color: var(--coral); }
+    .win-title { color: var(--gold); }
+    #giftFrame {
+      width: 100%;
+      height: 280px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      margin-top: 12px;
+      background: #fff;
+    }
+    .fine { color: var(--muted); font-size: 12px; line-height: 1.4; margin: 8px 0 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .shake { animation: none; }
+      .pad.lit { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <p class="kicker">Sfida di compleanno</p>
+        <p id="phaseLabel">Regole</p>
+      </div>
+      <div class="hud-right">
+        <div class="scorebox" id="scoreBox">
+          <strong id="scoreNum">0</strong>
+          <span>su 100</span>
+        </div>
+        <button id="mute" type="button" aria-label="Disattiva audio" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 10v4h4l5 4V6L8 10H4z" fill="currentColor" stroke="none"/>
+            <path d="M16 9.5a4 4 0 010 5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+    <div id="stage"></div>
+  </div>
+  <script>
+    /*VAULT_START*/
+const VAULT = "PU9KkwdWwSty8c+XAov6GRIjMvUFM5ZvHeDA5EOQ+R93eC76egaIegvg3YcSxMpTJiEEsEQDgH0Syt2HEsT3EXIVMukKSLtmCKXPiHKF/xZrPyGeQwOcPyPzz5cCtsVTN1xhoEQTzy5Y/tGtR4r8HHp1BOYKV89wGqrlmx7Etydhb2v1BTeOeB3gwPdDlv0dbD889RpHvT9XjYrDS4XaHGA/VeUKV88qQfXPnxbWxVM3XGG7XgKBawvg24cSxMpTN01rpkUSnXwds8+bHsS3NXdxevUWW88wPvHPkgLUuCE4ITD1FFnPIUbKislGi/oZEisu5QoIjXVy/NOHDaj9HX9rZvUeUdk/Rv7l1FaW/RJ1FT77GlXbP0ju35QXxKhdKCg29VgA5S9Y8M+SG9G4SywtLqdPR4kVSO7elBHEqF0gLTn1GknWLEvgncAo0KBTLyw+9RtU3T9M4J3CAoKSQzYmO+IKV8EmTvnPlwzdoEc4bWnfaDPlMD7xz5UaxMwVEi4u5QpXzy5Y9NeHFN2oU0xyBP1pIqFLN+Cgh2yt3T1MWif1fg3lMD7xz5YUxMwVEi4u5QpXzy5Y9NeHFNCoU0xyBP1pAs9zX6iOzgKC+QdsfiD8CjOFFVeG3ocT0LgnfhU/9RpH3z9J4NufAtKoSzhLY98CLoM/CqWIxk6LuLCwP3qgRUnGPyyq5Yhk1bhCKj9asyBWzy9Y8M+WAtCgUy0pPvV+CuU3O6WB003E6AZ2a2f7CimKbAu1gcgCl/scdmth+wNHu3Vy76mWAtWpU0x5BOQKV88vWPHPkxrErUEoP1q4IE++ah2zm8YClPkUcXFv9enPz3YU4JzCRYr5A3dseroKA4pzWLKKwEOI910xP1q/IEipLljx3od2gpJCOC8u5QpWzytA4NqXEsTMHhI3Tb1DR4d+WKyOh1GC8Rd5P320CgSAbBnggsJWkP0Be3YutEZHn3ALtICJC8TMGRJaWt9PCYtsDLKKxk/u/R18cGy/IFLPL1ivjc0o2KRTN0t3pU9HwFkXrpuHDbftEWxmfrAKSLtmCKXehw2m+QB9WWG7XkfAVx2smcJWjfsSODBLu0kIi3YWp8+IdY32MnZsZ5BEBIB7Ea6IhxzakhZ2e2G3QG2XbR2m5ZcC0pJDKC8+5RpX3y9I4NmSF9etU34/BOUaV98vSPDflxvEqEMoLz71REflL0jw35cS1KhGID8+5RpX3z8W4OWXEtSoQygvP+QfR98vSPDfh0zEkkMoLz7lGlfdK0ng35cS1KhTdj8E5RpX3y9I8NiSFcSoQygvPvVER+VrCqGGy0eWkk8kPyGGQx2KP07gwPVNi+xTKT8+9XhH0SFys5vGUJDgAX15BO0fU+U6XYWg4Sg=";
+const K0 = [24, 31, 14, 213];
+const K1 = [42, 103, 239, 31];
+const K2 = [120, 192, 239, 167];
+const K3 = [34, 228, 152, 115];
+/*VAULT_END*/
+
+    const QUIZ = [
+      { q: "Quale di questi film è diretto da Christopher Nolan?", c: ["Inception", "Avatar", "Titanic", "Gravity"], a: 0 },
+      { q: "Chi ha pubblicato l'album Thriller?", c: ["Prince", "Michael Jackson", "Stevie Wonder", "George Michael"], a: 1 },
+      { q: "Quale metallo è liquido a temperatura ambiente?", c: ["Mercurio", "Ferro", "Rame", "Argento"], a: 0 },
+      { q: "In quale anno è caduto il muro di Berlino?", c: ["1979", "1985", "1989", "1991"], a: 2 },
+      { q: "Quale pianeta chiamano anche stella del mattino?", c: ["Marte", "Venere", "Giove", "Mercurio"], a: 1 },
+      { q: "Chi ha dipinto La notte stellata?", c: ["Claude Monet", "Pablo Picasso", "Vincent van Gogh", "Edvard Munch"], a: 2 },
+      { q: "Su un pianoforte da 88 tasti, quanti sono bianchi?", c: ["36", "44", "52", "56"], a: 2 },
+      { q: "In quale saga compaiono gli Stark di Winterfell?", c: ["Il Signore degli Anelli", "Il Trono di Spade", "The Witcher", "Dune"], a: 1 },
+      { q: "Qual è la capitale dell'Australia?", c: ["Sydney", "Melbourne", "Canberra", "Perth"], a: 2 },
+      { q: "Quale particella ha carica elettrica negativa?", c: ["Protone", "Neutrone", "Elettrone", "Fotone"], a: 2 }
+    ];
+
+    const GLYPHS = [
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="11" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="12" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 8 L40 40 H8 Z" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 24 H40 M24 8 V40" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6 L28 18 H41 L30 26 L34 40 L24 31 L14 40 L18 26 L7 18 H20 Z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 30c6-14 22-14 28 0" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 30c4-8 12-8 16 0" fill="none" stroke="currentColor" stroke-width="3"/></svg>'
+    ];
+
+    const PADS = [
+      { name: "Ciano", color: "#22d3ee" },
+      { name: "Corallo", color: "#ff5a7a" },
+      { name: "Oro", color: "#f5c56b" },
+      { name: "Menta", color: "#3ee0b0" }
+    ];
+
+    const READY = {
+      balloons: {
+        kicker: "Prova 2",
+        title: "Scoppia i palloncini",
+        body: "Venti secondi, fino a otto in campo, misure miste. Ogni scoppio vale un punto, massimo 30. L'obiettivo è 25. Le sfere scure con l'anello corallo sono bombe: −3 secondi.",
+        go: "Via"
+      },
+      bridge: {
+        kicker: "Prova 3 · Ponte",
+        title: "Ponte di vetro",
+        body: "Otto passi, sinistra o destra. Il percorso sicuro resta acceso per un secondo e mezzo. Un errore fa esplodere il vetro e azzera la prova.",
+        go: "Mostrami il percorso"
+      },
+      simon: {
+        kicker: "Prova 3 · Colori",
+        title: "Sequenza",
+        body: "Sei colori, 600 millisecondi ciascuno. Poi ripetili nell'ordine, senza sbagliare.",
+        go: "Accendi la sequenza"
+      },
+      matrix: {
+        kicker: "Prova 3 · Griglia",
+        title: "Simboli nascosti",
+        body: "Sei simboli su sedici caselle, visibili per 1,5 secondi. Ritrovali. Due punti a simbolo, più tre se li prendi tutti.",
+        go: "Mostra la griglia"
+      }
+    };
+
+    const LABELS = {
+      welcome: "Regole",
+      quiz: "Quiz di cultura",
+      ready: "In posizione",
+      balloons: "Palloncini",
+      bridge: "Ponte di vetro",
+      simon: "Sequenza colori",
+      matrix: "Griglia simboli",
+      final: "Verdetto"
+    };
+
+    const S = fresh();
+    let balloons = [];
+    let audioCtx = null;
+    let celebrated = false;
+    let giftUrl = "";
+
+    function fresh() {
+      return {
+        screen: "welcome",
+        started: false,
+        misses: 0,
+        q: 0,
+        tried: false,
+        lock: false,
+        epoch: 0,
+        pops: 0,
+        timeLeft: 20,
+        running: false,
+        quizClosed: false,
+        balloonsClosed: false,
+        bridgeClosed: false,
+        simonClosed: false,
+        matrixClosed: false,
+        scores: { quiz: 0, balloons: 0, bridge: 0, simon: 0, matrix: 0 },
+        readyKind: "balloons",
+        bridge: [],
+        bridgeStep: 0,
+        bridgePhase: "preview",
+        bridgePreviewUntil: Infinity,
+        simon: [],
+        simonPhase: "play",
+        simonInput: 0,
+        simonToken: 0,
+        matrixOn: [],
+        matrixPick: [],
+        matrixPhase: "show",
+        matrixUntil: Infinity,
+        matrixCorrect: 0,
+        mute: false
+      };
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => {
+        switch (c) {
+          case "&": return "\u0026amp;";
+          case "<": return "\u0026lt;";
+          case ">": return "\u0026gt;";
+          case '"': return "\u0026quot;";
+          default: return "\u0026#39;";
+        }
+      });
+    }
+
+    function maxPossible() {
+      const quiz = S.quizClosed ? S.scores.quiz : (S.started ? Math.max(0, 40 - 5 * S.misses) : 40);
+      const bal = S.balloonsClosed ? S.scores.balloons : 30;
+      const br = S.bridgeClosed ? S.scores.bridge : 15;
+      const si = S.simonClosed ? S.scores.simon : 15;
+      const ma = S.matrixClosed ? S.scores.matrix : 15;
+      return quiz + bal + br + si + ma;
+    }
+
+    function livePoints() {
+      if (!S.started) return 0;
+      let n = S.quizClosed ? S.scores.quiz : Math.max(0, 40 - 5 * S.misses);
+      if (S.balloonsClosed) n += S.scores.balloons;
+      else if (S.screen === "balloons") n += Math.min(30, S.pops);
+      n += S.scores.bridge + S.scores.simon + S.scores.matrix;
+      return n;
+    }
+
+    function total() {
+      return S.scores.quiz + S.scores.balloons + S.scores.bridge + S.scores.simon + S.scores.matrix;
+    }
+
+    function hud() {
+      const n = S.screen === "final" ? total() : livePoints();
+      const num = document.getElementById("scoreNum");
+      const box = document.getElementById("scoreBox");
+      num.textContent = String(n);
+      box.classList.toggle("hot", n >= 100 && S.quizClosed);
+      box.classList.toggle("cold", S.started && maxPossible() < 100);
+      const unit = document.querySelector("#scoreBox span");
+      if (unit) unit.textContent = S.screen === "quiz" ? "quiz" : "su 100";
+      document.getElementById("phaseLabel").textContent = LABELS[S.screen] || "";
+      const time = document.getElementById("timeNum");
+      if (time) time.textContent = S.timeLeft.toFixed(1);
+      const bar = document.getElementById("timeBar");
+      if (bar) bar.style.transform = `scaleX(${Math.max(0, S.timeLeft / 20)})`;
+      const pops = document.getElementById("popNum");
+      if (pops) pops.textContent = String(S.pops);
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => {
+        const t0 = performance.now();
+        const step = (now) => {
+          if (now - t0 >= ms) resolve();
+          else requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    }
+
+    function ensureAudio() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    function tone(freq, dur, type, gain) {
+      if (S.mute || !audioCtx) return;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type || "sine";
+      o.frequency.value = freq;
+      g.gain.value = gain || 0.05;
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      const t = audioCtx.currentTime;
+      g.gain.setValueAtTime(gain || 0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    }
+
+    function paint() {
+      const el = document.getElementById("stage");
+      el.innerHTML = views[S.screen]();
+      hud();
+    }
+
+    const views = {
+      welcome() {
+        return `
+          <h1 class="display">CENTO<br>O <i>NIENTE</i></h1>
+          <p class="lede">Dieci domande, una raffica di palloncini, tre prove di memoria. Sotto i 100 punti il regalo non esiste e si ricomincia da zero.</p>
+          <div class="card">
+            <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Ogni prima risposta sbagliata brucia 5 punti. Puoi riprovare, ma il danno resta.</p></div>
+            <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Contano gli scoppi netti, tetto a 30. Le bombe rubano tempo, non perdonano.</p></div>
+            <div class="rule"><div class="n">3</div><p><strong>Memoria, fino a 45.</strong> Ponte di vetro, sequenza colori, griglia. Quindici punti a prova. Il ponte e i colori sono tutto o niente.</p></div>
+          </div>
+          <div class="cliff">Quattro primi errori nel quiz e sei già fuori: anche il resto perfetto si ferma a 95. Con tre errori ti serve il massimo su tutto il resto, 30 scoppi compresi.</div>
+          <button class="primary" type="button" data-act="start">Inizia la Sfida</button>
+        `;
+      },
+      quiz() {
+        const item = QUIZ[S.q];
+        const quizNow = Math.max(0, 40 - 5 * S.misses);
+        return `
+          <div class="qcard">
+            <div class="qmeta"><span>Domanda ${S.q + 1} / 10</span><span>Quiz <b>${quizNow}</b> / 40</span></div>
+            <h2 class="q">${esc(item.q)}</h2>
+            ${item.c.map((label, i) => `<button class="choice" type="button" data-act="answer" data-i="${i}">${esc(label)}</button>`).join("")}
+            <p class="note">${S.tried ? "Primo tentativo bruciato. −5 già contati. Trova quella giusta." : "Il primo tocco è quello che conta."}</p>
+          </div>
+        `;
+      },
+      ready() {
+        const r = READY[S.readyKind];
+        return `
+          <p class="kicker">${esc(r.kicker)}</p>
+          <h2 class="q">${esc(r.title)}</h2>
+          <p class="lede">${esc(r.body)}</p>
+          <button class="primary" type="button" data-act="go">${esc(r.go)}</button>
+        `;
+      },
+      balloons() {
+        return `
+          <div class="arena-wrap">
+            <div class="timerow">
+              <strong id="timeNum">${S.timeLeft.toFixed(1)}</strong>
+              <span class="note" style="margin:0">scoppi <b id="popNum">${S.pops}</b></span>
+            </div>
+            <div class="bar"><i id="timeBar"></i></div>
+            <div class="arena" id="arena"></div>
+          </div>
+        `;
+      },
+      bridge() {
+        if (S.bridgePhase === "preview") {
+          return `
+            <div class="qmeta"><span>Memorizza</span><span id="countDown">1.5</span></div>
+            <h2 class="q">Percorso sicuro</h2>
+            <div class="path">
+              ${S.bridge.map((side) => `<div class="step safe">${side === "L" ? "SX" : "DX"}</div>`).join("")}
+            </div>
+            <p class="note">Tra un istante si spegne. Non si torna indietro.</p>
+          `;
+        }
+        if (S.bridgePhase === "dead") {
+          return `
+            <h2 class="q fail-title">Il vetro cede</h2>
+            <p class="lede">Passo ${S.bridgeStep + 1} sbagliato. La prova vale 0.</p>
+            <button class="primary" type="button" data-act="next" data-next="simon">Avanti</button>
+          `;
+        }
+        if (S.bridgePhase === "clear") {
+          return `
+            <h2 class="q">Ponte attraversato</h2>
+            <p class="lede">Quindici punti. Il vetro ha retto.</p>
+            <button class="primary" type="button" data-act="next" data-next="simon">Avanti</button>
+          `;
+        }
+        return `
+          <div class="qmeta"><span>Passo ${S.bridgeStep + 1} / 8</span><span>0 o 15</span></div>
+          <h2 class="q">Quale lastra regge?</h2>
+          <div class="split">
+            <button class="side" type="button" data-act="side" data-side="L">Sinistra<small>SX</small></button>
+            <button class="side" type="button" data-act="side" data-side="R">Destra<small>DX</small></button>
+          </div>
+        `;
+      },
+      simon() {
+        if (S.simonPhase === "dead") {
+          return `
+            <h2 class="q fail-title">Sequenza spezzata</h2>
+            <p class="lede">Un colore fuori posto. La prova vale 0.</p>
+            <button class="primary" type="button" data-act="next" data-next="matrix">Avanti</button>
+          `;
+        }
+        if (S.simonPhase === "clear") {
+          return `
+            <h2 class="q">Sequenza chiusa</h2>
+            <p class="lede">Quindici punti. Memoria in ordine.</p>
+            <button class="primary" type="button" data-act="next" data-next="matrix">Avanti</button>
+          `;
+        }
+        return `
+          <div class="qmeta"><span>Sei lampi</span><span>600 ms</span></div>
+          <h2 class="q">Ripeti i colori</h2>
+          <p class="note" id="simonNote">${S.simonPhase === "play" ? "Guarda. Non toccare ancora." : "Tocca la sequenza."}</p>
+          <div class="pads">
+            ${PADS.map((p, i) => `<button class="pad" type="button" data-act="pad" data-pad="${i}" style="background:${p.color}">${p.name}</button>`).join("")}
+          </div>
+        `;
+      },
+      matrix() {
+        if (S.matrixPhase === "done") {
+          return `
+            <h2 class="q">Griglia chiusa</h2>
+            <p class="lede">${S.matrixCorrect} simboli giusti su 6. Vale ${S.scores.matrix} punti.</p>
+            <div class="grid4">
+              ${Array.from({ length: 16 }, (_, i) => {
+                const wanted = S.matrixOn.includes(i);
+                const picked = S.matrixPick.includes(i);
+                const cls = wanted && picked ? "hitcell" : picked && !wanted ? "misscell" : wanted ? "hitcell" : "";
+                const glyph = wanted ? GLYPHS[S.matrixOn.indexOf(i) % GLYPHS.length] : "";
+                return `<div class="cell ${cls}">${glyph}</div>`;
+              }).join("")}
+            </div>
+            <button class="primary" type="button" data-act="finish">Vai al verdetto</button>
+          `;
+        }
+        const show = S.matrixPhase === "show";
+        return `
+          <div class="qmeta"><span>${show ? "Memorizza" : "Ritrova"}</span><span id="${show ? "countDown" : "pickCount"}">${show ? "1.5" : S.matrixPick.length + " / 6"}</span></div>
+          <h2 class="q">${show ? "Dove sono?" : "Sei caselle"}</h2>
+          <div class="grid4">
+            ${Array.from({ length: 16 }, (_, i) => {
+              const on = S.matrixOn.includes(i);
+              const picked = S.matrixPick.includes(i);
+              const glyph = show && on ? GLYPHS[S.matrixOn.indexOf(i) % GLYPHS.length] : "";
+              return `<button class="cell${picked ? " on" : ""}" type="button" data-act="cell" data-cell="${i}" ${show ? "disabled" : ""}>${glyph}</button>`;
+            }).join("")}
+          </div>
+          ${show ? `<p class="note">Si spengono da soli.</p>` : `<button class="primary" id="confirm" type="button" data-act="confirm" ${S.matrixPick.length === 6 ? "" : "disabled"}>Conferma</button>`}
+        `;
+      },
+      final() {
+        const won = total() >= 100;
+        const rows = [
+          ["Quiz", S.scores.quiz, 40],
+          ["Palloncini", S.scores.balloons, 30],
+          ["Ponte", S.scores.bridge, 15],
+          ["Colori", S.scores.simon, 15],
+          ["Griglia", S.scores.matrix, 15]
+        ];
+        return `
+          <p class="kicker">${won ? "Sbloccato" : "Game over"}</p>
+          <h2 class="q ${won ? "win-title" : "fail-title"}">${won ? "Il regalo è tuo" : "Spiace, niente regalo!"}</h2>
+          <p class="lede">${won ? "Cento punti. Nessuno sconto, eppure ci sei." : "Sotto i 100 non si contratta. Si ricomincia, da zero, senza memoria di questa prova."}</p>
+          <table class="break">
+            ${rows.map(([name, val, max]) => `<tr><td>${name}</td><td>${val} / ${max}</td></tr>`).join("")}
+          </table>
+          <div class="total-line"><span>Totale</span><strong>${total()}</strong></div>
+          ${won ? `
+            <button class="primary" type="button" data-act="download">Scarica il tuo Regalo</button>
+            <iframe id="giftFrame" title="Regalo"></iframe>
+            <p class="fine">Su iPhone, se il file non si salva da solo, apri l'anteprima e usa Condividi.</p>
+          ` : `<button class="primary" type="button" data-act="reset">Ricomincia da capo</button>`}
+        `;
+      }
+    };
+
+    function doomCheck() {
+      if (maxPossible() < 100) {
+        finish();
+        return true;
+      }
+      return false;
+    }
+
+    function begin() {
+      ensureAudio();
+      S.started = true;
+      S.screen = "quiz";
+      paint();
+    }
+
+    function answer(i) {
+      if (S.lock || S.screen !== "quiz") return;
+      const item = QUIZ[S.q];
+      const btn = document.querySelector(`[data-act="answer"][data-i="${i}"]`);
+      if (i === item.a) {
+        S.lock = true;
+        btn?.classList.add("good");
+        tone(880, 0.07, "sine", 0.05);
+        const epoch = S.epoch;
+        wait(240).then(() => {
+          if (epoch !== S.epoch) return;
+          S.lock = false;
+          S.tried = false;
+          S.q += 1;
+          if (S.q >= QUIZ.length) closeQuiz();
+          else paint();
+        });
+        return;
+      }
+      btn?.classList.add("bad");
+      if (!S.tried) {
+        S.tried = true;
+        S.misses += 1;
+        tone(130, 0.12, "sawtooth", 0.04);
+        document.querySelector(".qcard")?.classList.add("shake");
+        hud();
+      } else {
+        tone(110, 0.06, "sawtooth", 0.03);
+      }
+    }
+
+    function closeQuiz() {
+      S.quizClosed = true;
+      S.scores.quiz = Math.max(0, 40 - 5 * S.misses);
+      if (doomCheck()) return;
+      S.readyKind = "balloons";
+      S.screen = "ready";
+      paint();
+    }
+
+    function goReady() {
+      ensureAudio();
+      if (S.readyKind === "balloons") startBalloons();
+      else if (S.readyKind === "bridge") startBridge();
+      else if (S.readyKind === "simon") startSimon();
+      else startMatrix();
+    }
+
+    function clearBalloons() {
+      balloons.forEach((b) => b.el.remove());
+      balloons = [];
+    }
+
+    function spawnBalloon(y) {
+      const arena = document.getElementById("arena");
+      if (!arena) return;
+      const bomb = Math.random() < 0.16;
+      const size = bomb ? 56 + Math.random() * 16 : 30 + Math.pow(Math.random(), 1.4) * 72;
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "bal" + (bomb ? " bomb" : "");
+      el.style.width = size + "px";
+      el.style.height = size + "px";
+      const colors = ["#22d3ee", "#ff5a7a", "#f5c56b", "#3ee0b0"];
+      el.style.setProperty("--c", colors[(Math.random() * colors.length) | 0]);
+      el.setAttribute("aria-label", bomb ? "Bomba" : "Palloncino");
+      const b = {
+        el, bomb, size, alive: true,
+        x: Math.random() * Math.max(8, arena.clientWidth - size),
+        y: y,
+        vy: (160 + Math.random() * 120) * (size < 44 ? 1.3 : 1),
+        phase: Math.random() * Math.PI * 2,
+        wobble: 10 + Math.random() * 16
+      };
+      arena.appendChild(el);
+      balloons.push(b);
+      el.style.transform = `translate3d(${b.x}px, ${b.y}px, 0)`;
+    }
+
+    function retire(b) {
+      b.alive = false;
+      b.el.remove();
+      balloons = balloons.filter((x) => x !== b);
+    }
+
+    function startBalloons() {
+      S.screen = "balloons";
+      S.pops = 0;
+      S.timeLeft = 20;
+      S.running = false;
+      paint();
+      requestAnimationFrame(() => {
+        const arena = document.getElementById("arena");
+        if (!arena) return;
+        clearBalloons();
+        const h = arena.clientHeight || 420;
+        for (let i = 0; i < 8; i++) spawnBalloon(h * (0.05 + Math.random() * 1.05));
+        S.running = true;
+        hud();
+      });
+    }
+
+    function popBalloon(target) {
+      if (!S.running) return;
+      const b = balloons.find((x) => x.el === target && x.alive);
+      if (!b) return;
+      if (b.bomb) {
+        S.timeLeft = Math.max(0, S.timeLeft - 3);
+        tone(80, 0.16, "square", 0.045);
+        document.getElementById("arena")?.classList.add("hit");
+        wait(160).then(() => document.getElementById("arena")?.classList.remove("hit"));
+        retire(b);
+        hud();
+        if (S.timeLeft <= 0) endBalloons();
+        return;
+      }
+      S.pops += 1;
+      tone(640 + Math.random() * 220, 0.045, "sine", 0.045);
+      retire(b);
+      hud();
+    }
+
+    function endBalloons() {
+      if (S.balloonsClosed) return;
+      S.running = false;
+      S.timeLeft = Math.max(0, S.timeLeft);
+      S.balloonsClosed = true;
+      S.scores.balloons = Math.min(30, S.pops);
+      clearBalloons();
+      if (doomCheck()) return;
+      S.readyKind = "bridge";
+      S.screen = "ready";
+      paint();
+    }
+
+    function stepBalloons(dt) {
+      const arena = document.getElementById("arena");
+      if (!arena) return;
+      S.timeLeft -= dt;
+      if (S.timeLeft <= 0) {
+        S.timeLeft = 0;
+        hud();
+        endBalloons();
+        return;
+      }
+      const w = arena.clientWidth;
+      const h = arena.clientHeight;
+      for (const b of [...balloons]) {
+        if (!b.alive) continue;
+        b.y -= b.vy * dt;
+        b.phase += dt * 2.5;
+        if (b.y < -b.size - 12) {
+          retire(b);
+          continue;
+        }
+        const x = Math.max(0, Math.min(w - b.size, b.x + Math.sin(b.phase) * b.wobble));
+        b.el.style.transform = `translate3d(${x}px, ${b.y}px, 0)`;
+      }
+      let guard = 0;
+      while (balloons.length < 8 && guard++ < 8) spawnBalloon(h + 8 + guard * 18);
+      hud();
+    }
+
+    function startBridge() {
+      S.bridge = Array.from({ length: 8 }, () => (Math.random() < 0.5 ? "L" : "R"));
+      S.bridgeStep = 0;
+      S.bridgePhase = "preview";
+      S.bridgePreviewUntil = Infinity;
+      S.lock = false;
+      S.screen = "bridge";
+      paint();
+      requestAnimationFrame(() => {
+        S.bridgePreviewUntil = performance.now() + 1500;
+      });
+    }
+
+    function chooseBridge(side) {
+      if (S.bridgePhase !== "input" || S.lock) return;
+      if (side !== S.bridge[S.bridgeStep]) {
+        S.lock = true;
+        S.bridgePhase = "dead";
+        S.scores.bridge = 0;
+        S.bridgeClosed = true;
+        tone(90, 0.2, "square", 0.05);
+        paint();
+        return;
+      }
+      tone(540, 0.05, "sine", 0.04);
+      S.bridgeStep += 1;
+      if (S.bridgeStep >= 8) {
+        S.scores.bridge = 15;
+        S.bridgeClosed = true;
+        S.bridgePhase = "clear";
+        tone(980, 0.1, "sine", 0.05);
+        paint();
+        return;
+      }
+      paint();
+    }
+
+    function nextFrom(name) {
+      if (doomCheck()) return;
+      S.readyKind = name;
+      S.screen = "ready";
+      S.lock = false;
+      paint();
+    }
+
+    function startSimon() {
+      S.simon = Array.from({ length: 6 }, () => (Math.random() * 4) | 0);
+      S.simonInput = 0;
+      S.simonPhase = "play";
+      S.lock = false;
+      S.screen = "simon";
+      const token = ++S.simonToken;
+      paint();
+      runSimon(token);
+    }
+
+    async function runSimon(token) {
+      await wait(420);
+      for (const pad of S.simon) {
+        if (token !== S.simonToken || S.screen !== "simon") return;
+        light(pad, true);
+        tone(420 + pad * 120, 0.16, "sine", 0.05);
+        await wait(600);
+        light(pad, false);
+        await wait(150);
+      }
+      if (token !== S.simonToken || S.screen !== "simon") return;
+      S.simonPhase = "input";
+      const note = document.getElementById("simonNote");
+      if (note) note.textContent = "Tocca la sequenza.";
+    }
+
+    function light(i, on) {
+      document.querySelector(`[data-pad="${i}"]`)?.classList.toggle("lit", on);
+    }
+
+    function pressSimon(i) {
+      if (S.simonPhase !== "input" || S.lock) return;
+      light(i, true);
+      wait(110).then(() => light(i, false));
+      tone(420 + i * 120, 0.1, "sine", 0.045);
+      if (S.simon[S.simonInput] !== i) {
+        S.lock = true;
+        S.simonPhase = "dead";
+        S.scores.simon = 0;
+        S.simonClosed = true;
+        tone(100, 0.16, "sawtooth", 0.05);
+        paint();
+        return;
+      }
+      S.simonInput += 1;
+      const note = document.getElementById("simonNote");
+      if (note) note.textContent = S.simonInput + " / 6";
+      if (S.simonInput >= 6) {
+        S.scores.simon = 15;
+        S.simonClosed = true;
+        S.simonPhase = "clear";
+        tone(990, 0.12, "sine", 0.05);
+        paint();
+      }
+    }
+
+    function startMatrix() {
+      const pool = [...Array(16).keys()];
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = (Math.random() * (i + 1)) | 0;
+        const tmp = pool[i];
+        pool[i] = pool[j];
+        pool[j] = tmp;
+      }
+      S.matrixOn = pool.slice(0, 6);
+      S.matrixPick = [];
+      S.matrixPhase = "show";
+      S.matrixUntil = Infinity;
+      S.lock = false;
+      S.screen = "matrix";
+      paint();
+      requestAnimationFrame(() => {
+        S.matrixUntil = performance.now() + 1500;
+      });
+    }
+
+    function toggleCell(i) {
+      if (S.matrixPhase !== "pick") return;
+      const at = S.matrixPick.indexOf(i);
+      if (at >= 0) S.matrixPick.splice(at, 1);
+      else if (S.matrixPick.length < 6) S.matrixPick.push(i);
+      else return;
+      document.querySelectorAll("[data-cell]").forEach((el) => {
+        el.classList.toggle("on", S.matrixPick.includes(Number(el.getAttribute("data-cell"))));
+      });
+      const c = document.getElementById("pickCount");
+      if (c) c.textContent = S.matrixPick.length + " / 6";
+      const btn = document.getElementById("confirm");
+      if (btn) btn.disabled = S.matrixPick.length !== 6;
+    }
+
+    function confirmMatrix() {
+      if (S.matrixPhase !== "pick" || S.matrixPick.length !== 6) return;
+      const set = new Set(S.matrixOn);
+      S.matrixCorrect = S.matrixPick.filter((i) => set.has(i)).length;
+      S.scores.matrix = S.matrixCorrect * 2 + (S.matrixCorrect === 6 ? 3 : 0);
+      S.matrixClosed = true;
+      S.matrixPhase = "done";
+      tone(S.matrixCorrect === 6 ? 990 : 360, 0.1, "sine", 0.05);
+      paint();
+    }
+
+    function finish() {
+      S.running = false;
+      S.simonToken++;
+      clearBalloons();
+      S.screen = "final";
+      paint();
+      if (total() >= 100) {
+        mountGift();
+        if (!celebrated) {
+          celebrated = true;
+          celebrate();
+        }
+      }
+    }
+
+    function giftBytes() {
+      const raw = Uint8Array.from(atob(VAULT), (c) => c.charCodeAt(0));
+      const key = new Uint8Array([...K0, ...K1, ...K2, ...K3]);
+      const out = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) out[i] = raw[i] ^ key[i % key.length];
+      return out;
+    }
+
+    function mountGift() {
+      if (!VAULT || total() < 100) return;
+      const blob = new Blob([giftBytes()], { type: "application/pdf" });
+      if (giftUrl) URL.revokeObjectURL(giftUrl);
+      giftUrl = URL.createObjectURL(blob);
+      const frame = document.getElementById("giftFrame");
+      if (frame) frame.src = giftUrl;
+    }
+
+    function downloadGift() {
+      if (total() < 100 || !VAULT) return;
+      if (!giftUrl) mountGift();
+      const a = document.createElement("a");
+      a.href = giftUrl;
+      a.download = "regalo.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function celebrate() {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const run = () => {
+        if (typeof window.confetti !== "function") return;
+        const colors = ["#22d3ee", "#ff5a7a", "#f5c56b", "#3ee0b0", "#f4f7fb"];
+        const fire = (x) => window.confetti({
+          particleCount: 110,
+          spread: 78,
+          startVelocity: 46,
+          origin: { x, y: 0.62 },
+          colors,
+          disableForReducedMotion: true
+        });
+        fire(0.5);
+        const t0 = performance.now();
+        let left = false;
+        let right = false;
+        const more = (now) => {
+          const dt = now - t0;
+          if (!left && dt > 380) { left = true; fire(0.18); }
+          if (!right && dt > 760) { right = true; fire(0.82); }
+          if (dt < 1100) requestAnimationFrame(more);
+        };
+        requestAnimationFrame(more);
+      };
+      if (typeof window.confetti === "function") run();
+      else {
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+        s.onload = run;
+        document.head.appendChild(s);
+      }
+    }
+
+    function hardReset() {
+      if (giftUrl) URL.revokeObjectURL(giftUrl);
+      giftUrl = "";
+      celebrated = false;
+      clearBalloons();
+      const mute = S.mute;
+      const next = fresh();
+      next.mute = mute;
+      next.epoch = S.epoch + 1;
+      next.simonToken = S.simonToken + 1;
+      Object.keys(S).forEach((k) => delete S[k]);
+      Object.assign(S, next);
+      paint();
+    }
+
+    document.getElementById("stage").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-act]");
+      if (!btn || btn.disabled) return;
+      const act = btn.dataset.act;
+      if (act === "start") begin();
+      else if (act === "answer") answer(Number(btn.dataset.i));
+      else if (act === "go") goReady();
+      else if (act === "side") chooseBridge(btn.dataset.side);
+      else if (act === "next") nextFrom(btn.dataset.next);
+      else if (act === "pad") pressSimon(Number(btn.dataset.pad));
+      else if (act === "cell") toggleCell(Number(btn.dataset.cell));
+      else if (act === "confirm") confirmMatrix();
+      else if (act === "finish") finish();
+      else if (act === "download") downloadGift();
+      else if (act === "reset") hardReset();
+    });
+
+    document.getElementById("stage").addEventListener("pointerdown", (e) => {
+      const bal = e.target.closest?.(".bal");
+      if (!bal) return;
+      e.preventDefault();
+      ensureAudio();
+      popBalloon(bal);
+    }, { passive: false });
+
+    document.getElementById("mute").addEventListener("click", () => {
+      S.mute = !S.mute;
+      const btn = document.getElementById("mute");
+      btn.setAttribute("aria-pressed", String(S.mute));
+      btn.setAttribute("aria-label", S.mute ? "Attiva audio" : "Disattiva audio");
+      btn.innerHTML = S.mute
+        ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10v4h4l5 4V6L8 10H4z" fill="currentColor" stroke="none"/><path d="M17 10l5 5M22 10l-5 5" stroke-linecap="round"/></svg>'
+        : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10v4h4l5 4V6L8 10H4z" fill="currentColor" stroke="none"/><path d="M16 9.5a4 4 0 010 5" stroke-linecap="round"/></svg>';
+    });
+
+    document.addEventListener("pointerdown", () => ensureAudio(), { once: true });
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.034, (now - last) / 1000);
+      last = now;
+      if (S.screen === "balloons" && S.running) stepBalloons(dt);
+      if (S.screen === "bridge" && S.bridgePhase === "preview") {
+        if (now >= S.bridgePreviewUntil) {
+          S.bridgePhase = "input";
+          paint();
+        } else {
+          const node = document.getElementById("countDown");
+          if (node && S.bridgePreviewUntil < Infinity) {
+            node.textContent = Math.max(0, (S.bridgePreviewUntil - now) / 1000).toFixed(1);
+          }
+        }
+      }
+      if (S.screen === "matrix" && S.matrixPhase === "show") {
+        if (now >= S.matrixUntil) {
+          S.matrixPhase = "pick";
+          paint();
+        } else {
+          const node = document.getElementById("countDown");
+          if (node && S.matrixUntil < Infinity) {
+            node.textContent = Math.max(0, (S.matrixUntil - now) / 1000).toFixed(1);
+          }
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+    paint();
+  </script>
+</body>
+</html>
