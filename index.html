@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
   <meta name="theme-color" content="#060914" />
   <meta name="robots" content="noindex, nofollow" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cento o niente" />
   <title>Cento o niente</title>
   <style>
     :root {
@@ -26,27 +28,52 @@
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; margin: 0; }
     body {
+      height: 100dvh;
       min-height: 100dvh;
-      background:
-        radial-gradient(900px 420px at 50% -12%, rgba(34, 211, 238, 0.16), transparent 60%),
-        var(--bg);
+      overflow: hidden;
+      background: var(--bg);
       color: var(--fg);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      display: flex;
-      justify-content: center;
       user-select: none;
       -webkit-user-select: none;
     }
     button { font: inherit; color: inherit; touch-action: manipulation; }
     .app {
-      width: min(480px, 100%);
-      height: 100svh;
-      max-height: 100svh;
+      width: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      padding: calc(8px + var(--safe-top)) 16px calc(10px + var(--safe-bot));
+      padding: var(--safe-top) 16px var(--safe-bot);
+      background:
+        radial-gradient(900px 420px at 50% -12%, rgba(34, 211, 238, 0.16), transparent 60%),
+        var(--bg);
     }
+    .app.at-door { padding: 0; background: #f6efe4; }
+    .app.at-door #stage,
+    .app.at-door .scene,
+    .app.at-door .book,
+    .app.at-door .cardbox {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      margin: 0;
+    }
+    .app.at-door .cardbox { aspect-ratio: auto; }
+    .app.at-door .stack { left: 0; top: 0; bottom: 0; width: 7px; border-radius: 0; }
+    .app.at-door .inside,
+    .app.at-door .leaf-front,
+    .app.at-door .leaf-back { border-radius: 0; }
+    .app.at-door .inside {
+      padding: calc(20px + var(--safe-top)) 18px calc(16px + var(--safe-bot)) 22px;
+    }
+    .app.at-door .open-hint {
+      right: 16px;
+      bottom: calc(18px + var(--safe-bot));
+    }
+    .app.at-door .dogear { bottom: var(--safe-bot); }
     header {
       display: flex;
       align-items: flex-end;
@@ -603,7 +630,7 @@
       -webkit-backface-visibility: hidden;
     }
     .leaf-front { background: #f6efe4; box-shadow: 0 18px 40px rgba(0,0,0,.38); }
-    .leaf-front img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .leaf-front img { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; }
     .leaf-back {
       transform: rotateY(180deg);
       background: linear-gradient(90deg, #e7d8c0, #f7f1e6 22%);
