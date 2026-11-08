@@ -37,13 +37,15 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    button { font: inherit; color: inherit; }
+    button { font: inherit; color: inherit; touch-action: manipulation; }
     .app {
       width: min(480px, 100%);
-      min-height: 100dvh;
+      height: 100svh;
+      max-height: 100svh;
       display: flex;
       flex-direction: column;
-      padding: calc(10px + var(--safe-top)) 16px calc(96px + var(--safe-bot));
+      overflow: hidden;
+      padding: calc(8px + var(--safe-top)) 16px calc(10px + var(--safe-bot));
     }
     header {
       display: flex;
@@ -95,7 +97,77 @@
       min-height: 0;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
     }
+    .scene {
+      flex: 1 0 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      animation: sceneIn .42s cubic-bezier(.22, .7, .2, 1) both;
+    }
+    @keyframes sceneIn {
+      from { opacity: 0; transform: translate3d(28px, 0, 0); }
+      to { opacity: 1; transform: none; }
+    }
+    .nag {
+      margin: 10px 0 0;
+      color: #ffd0d8;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .doombar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      padding: 10px 10px 10px 12px;
+      border-radius: 16px;
+      background: rgba(255, 90, 122, 0.12);
+      border: 1px solid rgba(255, 90, 122, 0.45);
+    }
+    .doombar[hidden] { display: none; }
+    .doombar p { margin: 0; flex: 1; font-size: 13px; line-height: 1.35; color: #ffd5dc; }
+    .doombar button {
+      flex: none;
+      min-height: 44px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 0;
+      background: var(--coral);
+      color: #fff;
+      font-weight: 750;
+      font-size: 14px;
+    }
+    .veil {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      padding: calc(24px + var(--safe-top)) 28px calc(24px + var(--safe-bot));
+      background: rgba(6, 9, 20, 0.94);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    .veil[hidden] { display: none; }
+    .veil.on { opacity: 1; pointer-events: auto; }
+    .veil p {
+      margin: 0;
+      max-width: 18em;
+      text-align: center;
+      font-family: Georgia, Palatino, serif;
+      font-style: italic;
+      font-size: clamp(26px, 7vw, 34px);
+      line-height: 1.25;
+      color: #f6efe4;
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    .veil.on p { animation: lineIn .55s .12s ease forwards; }
+    @keyframes lineIn { to { opacity: 1; transform: none; } }
     .display {
       margin: 8px 0 0;
       font-size: clamp(46px, 14vw, 68px);
@@ -178,8 +250,8 @@
     }
     .qmeta b { color: var(--fg); font-weight: 750; }
     h2.q {
-      margin: 12px 0 14px;
-      font-size: 24px;
+      margin: 8px 0 10px;
+      font-size: 22px;
       line-height: 1.2;
       letter-spacing: -0.03em;
       font-weight: 750;
@@ -187,8 +259,8 @@
     .choice {
       width: 100%;
       text-align: left;
-      min-height: 52px;
-      margin-bottom: 8px;
+      min-height: 48px;
+      margin-bottom: 6px;
       padding: 12px 14px;
       background: var(--glass);
       border-color: var(--line);
@@ -216,7 +288,7 @@
     .arena {
       position: relative;
       flex: 1;
-      min-height: 360px;
+      min-height: 0;
       border-radius: 28px;
       overflow: hidden;
       touch-action: none;
@@ -291,7 +363,7 @@
     }
     .bridge-scene {
       position: relative;
-      height: min(62dvh, 520px);
+      height: min(46dvh, 420px);
       margin-top: 8px;
       border-radius: 24px;
       overflow: hidden;
@@ -383,7 +455,7 @@
     }
     .pads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
     .pad {
-      min-height: 108px;
+      min-height: 92px;
       font-weight: 760;
       letter-spacing: -0.03em;
       color: var(--ink);
@@ -636,9 +708,15 @@
     .seal-row p { margin: 0; color: #5c5146; font-size: 14px; line-height: 1.35; }
     .seal-row strong { display: block; color: #1c140e; font-size: 15px; font-weight: 750; }
     @media (prefers-reduced-motion: reduce) {
-      .shake { animation: none; }
+      .scene, .veil, .veil p, .shake { animation: none; transition: none; }
       .pad.lit { transition: none; }
       .mini-bal { animation: none; }
+    }
+    @media (max-height: 740px) {
+      h2.q { font-size: 22px; margin: 8px 0 10px; }
+      .pad { min-height: 76px; }
+      .bridge-scene { height: min(42dvh, 340px); }
+      .choice { min-height: 46px; margin-bottom: 6px; }
     }
   </style>
 </head>
@@ -652,7 +730,7 @@
       <div class="hud-right">
         <div class="scorebox" id="scoreBox">
           <strong id="scoreNum">0</strong>
-          <span>su 100</span>
+          <span>min 98</span>
         </div>
         <button id="mute" type="button" aria-label="Disattiva audio" aria-pressed="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -663,9 +741,28 @@
       </div>
     </header>
     <div id="stage"></div>
+    <div id="doombar" class="doombar" hidden>
+      <p>Anche il resto perfetto non arriva a 98. Il premio è già perso. Puoi continuare, oppure ricominciare.</p>
+      <button type="button" data-act="reset">Ricomincia</button>
+    </div>
+  </div>
+  <div id="veil" class="veil" hidden>
+    <p id="veilLine"></p>
   </div>
   <script>
+    const WIN = 98;
     const GIFT_IMAGE = "";
+    const NAGS = [
+      "Sotto 98 punti il regalo non si apre.",
+      "Se sbagli troppo, il premio non c'è.",
+      "Niente metà regalo. O ci arrivi, o si ricomincia."
+    ];
+    const CHEERS = [
+      "Si ricomincia. Il regalo non se n’è andato.",
+      "Da capo. 98 è ancora possibile.",
+      "Zero punti, di nuovo. Stavolta li tieni.",
+      "Va bene così. Il biglietto ti aspetta un’altra volta."
+    ];
 
     const QUIZ = [
       { q: "Qual è la capitale dell'Australia?", c: ["Sydney", "Melbourne", "Canberra", "Perth"], a: 2 },
@@ -856,11 +953,13 @@
       const num = document.getElementById("scoreNum");
       const box = document.getElementById("scoreBox");
       num.textContent = String(n);
-      box.classList.toggle("hot", n >= 100 && S.quizClosed);
-      box.classList.toggle("cold", S.started && maxPossible() < 100);
+      box.classList.toggle("hot", n >= WIN);
+      box.classList.toggle("cold", S.started && maxPossible() < WIN);
       const unit = document.querySelector("#scoreBox span");
-      if (unit) unit.textContent = S.screen === "quiz" ? "quiz" : "su 100";
+      if (unit) unit.textContent = "min " + WIN;
       document.querySelector(".app").classList.toggle("at-door", S.screen === "welcome");
+      const doom = document.getElementById("doombar");
+      if (doom) doom.hidden = !(S.started && S.screen !== "welcome" && S.screen !== "final" && maxPossible() < WIN);
       const time = document.getElementById("timeNum");
       if (time) time.textContent = S.timeLeft.toFixed(1);
       const bar = document.getElementById("timeBar");
@@ -905,7 +1004,7 @@
 
     function paint() {
       const el = document.getElementById("stage");
-      el.innerHTML = views[S.screen]();
+      el.innerHTML = `<div class="scene">${views[S.screen]()}</div>`;
       hud();
     }
 
@@ -918,10 +1017,10 @@
               <div class="stack" aria-hidden="true"></div>
               <div class="inside">
                 <p class="inside-kicker">Dentro il biglietto</p>
-                <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Ogni prima risposta sbagliata brucia 5 punti. Puoi riprovare, ma il danno resta.</p></div>
-                <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Contano gli scoppi netti, tetto a 30. Le bombe rubano tempo, non perdonano.</p></div>
-                <div class="rule"><div class="n">3</div><p><strong>Memoria, fino a 45.</strong> Ponte di vetro, xilofono, griglia. Quindici punti a prova. Il ponte e le note sono tutto o niente.</p></div>
-                <div class="cliff">Quattro primi errori nel quiz e sei già fuori: anche il resto perfetto si ferma a 95. Con tre errori ti serve il massimo su tutto il resto, 30 scoppi compresi.</div>
+                <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Il primo errore su una domanda brucia 5 punti.</p></div>
+                <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Le bombe rubano tempo.</p></div>
+                <div class="rule"><div class="n">3</div><p><strong>Memoria, fino a 45.</strong> Ponte, xilofono, griglia. Quindici punti a prova, tutto o niente.</p></div>
+                <div class="cliff">Il premio si apre da 98, anche a 99 o 100. Se i punti non bastano più, puoi continuare o ricominciare.</div>
                 <button class="primary" type="button" data-act="start">Inizia la Sfida</button>
               </div>
               <button class="leaf" type="button" data-act="open" aria-label="Apri il biglietto">
@@ -944,7 +1043,7 @@
             <div class="qmeta"><span>Domanda ${S.q + 1} / 10</span><span>Quiz <b>${quizNow}</b> / 40</span></div>
             <h2 class="q">${esc(item.q)}</h2>
             ${item.c.map((label, i) => `<button class="choice" type="button" data-act="answer" data-i="${i}">${esc(label)}</button>`).join("")}
-            <p class="note">${S.tried ? "Primo tentativo bruciato. −5 già contati. Trova quella giusta." : "Il primo tocco è quello che conta."}</p>
+            <p class="note">${S.tried ? "Primo tentativo bruciato. −5 già contati. Sotto 98 il regalo non si apre." : (S.q % 3 === 2 ? NAGS[S.q % NAGS.length] : "Il primo tocco è quello che conta.")}</p>
           </div>
         `;
       },
@@ -954,6 +1053,7 @@
           <p class="kicker">${esc(r.kicker)}</p>
           <h2 class="q">${esc(r.title)}</h2>
           <p class="lede">${esc(r.body)}</p>
+          <p class="nag">${esc(NAGS[["balloons", "bridge", "simon", "matrix"].indexOf(S.readyKind)] || NAGS[0])}</p>
           <button class="primary" type="button" data-act="go">${esc(r.go)}</button>
         `;
       },
@@ -1059,7 +1159,7 @@
         `;
       },
       final() {
-        const won = total() >= 100;
+        const won = total() >= WIN;
         const rows = [
           ["Quiz", S.scores.quiz, 40],
           ["Palloncini", S.scores.balloons, 30],
@@ -1070,7 +1170,7 @@
         return `
           <p class="kicker">${won ? "Sbloccato" : "Game over"}</p>
           <h2 class="q ${won ? "win-title" : "fail-title"}">${won ? "Il regalo è tuo" : "Spiace, niente regalo!"}</h2>
-          <p class="lede">${won ? "Cento punti. Nessuno sconto, eppure ci sei." : "Sotto i 100 non si contratta. Si ricomincia, da zero, senza memoria di questa prova."}</p>
+          <p class="lede">${won ? "Da 98 in su il regalo si apre. Ci sei." : "Sotto 98 non basta. Niente regalo, questa volta. Si ricomincia da zero."}</p>
           <table class="break">
             ${rows.map(([name, val, max]) => `<tr><td>${name}</td><td>${val} / ${max}</td></tr>`).join("")}
           </table>
@@ -1082,14 +1182,6 @@
         `;
       }
     };
-
-    function doomCheck() {
-      if (maxPossible() < 100) {
-        finish();
-        return true;
-      }
-      return false;
-    }
 
     function begin() {
       ensureAudio();
@@ -1123,6 +1215,8 @@
         S.misses += 1;
         tone(130, 0.12, "sawtooth", 0.04);
         document.querySelector(".qcard")?.classList.add("shake");
+        const note = document.querySelector(".qcard .note");
+        if (note) note.textContent = "−5. Il quiz vale " + Math.max(0, 40 - 5 * S.misses) + ". Sotto 98, niente premio.";
         hud();
       } else {
         tone(110, 0.06, "sawtooth", 0.03);
@@ -1132,7 +1226,6 @@
     function closeQuiz() {
       S.quizClosed = true;
       S.scores.quiz = Math.max(0, 40 - 5 * S.misses);
-      if (doomCheck()) return;
       S.readyKind = "balloons";
       S.screen = "ready";
       paint();
@@ -1232,7 +1325,6 @@
       S.balloonsClosed = true;
       S.scores.balloons = Math.min(30, S.pops);
       clearBalloons();
-      if (doomCheck()) return;
       S.readyKind = "bridge";
       S.screen = "ready";
       paint();
@@ -1339,7 +1431,6 @@
     }
 
     function nextFrom(name) {
-      if (doomCheck()) return;
       S.readyKind = name;
       S.screen = "ready";
       S.lock = false;
@@ -1475,7 +1566,7 @@
       clearBalloons();
       S.screen = "final";
       paint();
-      if (total() >= 100 && !celebrated) {
+      if (total() >= WIN && !celebrated) {
         celebrated = true;
         celebrate();
       }
@@ -1516,19 +1607,35 @@
     }
 
     function hardReset() {
-      celebrated = false;
+      const veil = document.getElementById("veil");
+      if (!veil || veil.classList.contains("on") || S.resetting) return;
+      S.resetting = true;
+      S.running = false;
+      S.epoch += 1;
+      S.simonToken += 1;
       clearBalloons();
-      const mute = S.mute;
-      const next = fresh();
-      next.mute = mute;
-      next.epoch = S.epoch + 1;
-      next.simonToken = S.simonToken + 1;
-      Object.keys(S).forEach((k) => delete S[k]);
-      Object.assign(S, next);
-      paint();
+      document.getElementById("veilLine").textContent = CHEERS[(Math.random() * CHEERS.length) | 0];
+      veil.hidden = false;
+      requestAnimationFrame(() => veil.classList.add("on"));
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setTimeout(() => {
+        celebrated = false;
+        const mute = S.mute;
+        const epoch = S.epoch;
+        const token = S.simonToken;
+        const next = fresh();
+        next.mute = mute;
+        next.epoch = epoch;
+        next.simonToken = token;
+        Object.keys(S).forEach((k) => delete S[k]);
+        Object.assign(S, next);
+        paint();
+        veil.classList.remove("on");
+        setTimeout(() => { veil.hidden = true; }, reduce ? 0 : 360);
+      }, reduce ? 240 : 1500);
     }
 
-    document.getElementById("stage").addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-act]");
       if (!btn || btn.disabled) return;
       const act = btn.dataset.act;
