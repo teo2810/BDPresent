@@ -298,18 +298,18 @@
       background: #2fbf71;
       border-color: #187a45;
       color: #fff;
-      transform: scale(1.03);
     }
     .choice.bad {
       background: #e23b5b;
       border-color: #9b1d36;
       color: #fff;
-      transform: scale(0.98);
     }
+    .qcard { overflow: hidden; }
     .choice, .primary, .pad, .pane, .cell {
-      transition: transform .14s ease, background .16s ease, box-shadow .16s ease, border-color .16s ease;
+      transition: background .16s ease, box-shadow .16s ease, border-color .16s ease, filter .12s ease;
     }
-    .choice:active, .primary:active, .pad:active, .pane:active, .cell:active { transform: scale(0.96); }
+    .primary:active, .pad:active, .pane:active, .cell:active { transform: scale(0.97); }
+    .choice:active { filter: brightness(0.97); }
     .shake { animation: shake 0.36s ease; }
     @keyframes shake {
       20% { transform: translateX(-7px); }
@@ -410,75 +410,122 @@
     @keyframes sway {
       50% { transform: rotate(7deg); }
     }
+    .bal svg { width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
+    .bal.popped svg, .bal.blast svg { animation: boom .42s ease forwards; }
+    @keyframes boom {
+      30% { transform: scale(1.18); filter: brightness(1.35); }
+      100% { transform: scale(1.55); opacity: 0; }
+    }
     .bridge-scene {
       position: relative;
-      height: min(46dvh, 420px);
+      height: min(52dvh, 480px);
       margin-top: 8px;
       border-radius: 24px;
       overflow: hidden;
       background:
-        radial-gradient(70% 36% at 50% 0%, rgba(255, 186, 196, .7), transparent 62%),
-        radial-gradient(50% 28% at 90% 100%, rgba(245, 197, 107, .45), transparent 60%),
-        linear-gradient(180deg, #f8f1e6, #f0e0cc);
+        radial-gradient(28% 18% at 8% 12%, rgba(244, 114, 142, .45), transparent 70%),
+        radial-gradient(26% 16% at 92% 14%, rgba(244, 160, 180, .5), transparent 70%),
+        radial-gradient(24% 14% at 18% 78%, rgba(127, 163, 122, .35), transparent 70%),
+        radial-gradient(22% 14% at 84% 76%, rgba(232, 196, 120, .4), transparent 70%),
+        linear-gradient(180deg, #fbf7f0, #f4e7d6);
       border: 1px solid rgba(154, 112, 42, .4);
     }
-    .track {
+    .span3d {
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 12px;
-      bottom: 36px;
+      left: 16%;
+      right: 16%;
+      top: 8%;
+      bottom: 58px;
+      display: flex;
+      gap: 5px;
+      transform: perspective(720px) rotateX(34deg);
+      transform-origin: center bottom;
+    }
+    .rail {
+      width: 8px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #8a6428, #f6e2a8 42%, #c6a15a 70%, #8a6428);
+      box-shadow: 0 0 0 1px rgba(120, 82, 28, .45);
+    }
+    .track {
+      position: relative;
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
     .pair {
       flex: 1 1 0;
       min-height: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
     .pane {
       height: 100%;
-      min-height: 26px;
+      min-height: 18px;
       padding: 0;
-      border-radius: 12px;
-      border: 1px solid rgba(154, 112, 42, .45);
+      border-radius: 5px;
+      border: 2px solid #d7b56a;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.15) 40%),
-        #f6efe4;
-      box-shadow: 0 4px 0 rgba(176, 132, 72, .35);
+        linear-gradient(165deg, rgba(255,255,255,.8), rgba(255,255,255,0) 46%),
+        linear-gradient(180deg, rgba(186, 214, 206, .62), rgba(255,255,255,.28));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
     }
     .pane:disabled { opacity: 1; }
     .pane.lit {
-      background: linear-gradient(180deg, #ffe7b0, #f5c56b);
+      background:
+        linear-gradient(165deg, rgba(255,255,255,.75), rgba(255,255,255,0) 40%),
+        linear-gradient(180deg, #ffe7b0, #f5c56b);
       border-color: #c44762;
-      box-shadow: 0 0 0 2px #c44762, 0 4px 0 rgba(176, 132, 72, .35);
+      box-shadow: 0 0 10px rgba(245, 197, 107, .85);
     }
-    .pane.current { box-shadow: 0 0 0 2px #8d4538, 0 4px 0 rgba(176, 132, 72, .35); }
+    .pane.current { box-shadow: inset 0 0 0 2px #8d4538; }
     .pane.stood {
-      background: linear-gradient(180deg, #e7f8ef, #8ed9b4);
+      background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(142, 217, 180, .75));
       border-color: #1e8f52;
     }
     .pane.shatter {
-      background: #e23b5b;
+      background:
+        linear-gradient(118deg, transparent 46%, rgba(155, 29, 54, .9) 47% 49%, transparent 50%),
+        linear-gradient(62deg, transparent 42%, rgba(155, 29, 54, .85) 43% 45%, transparent 46%),
+        rgba(226, 59, 91, .55);
       animation: crack .5s ease forwards;
     }
     @keyframes crack {
-      50% { transform: scale(1.05); }
-      100% { transform: translateY(18px) scale(.72); opacity: .15; }
+      50% { transform: scale(1.04); }
+      100% { transform: translateY(10px) scale(.8); opacity: .2; }
     }
+    .post {
+      position: absolute;
+      bottom: 16px;
+      width: 16px;
+      height: 42px;
+      border-radius: 5px;
+      background: linear-gradient(#8fb089, #3f6b4e);
+      box-shadow: inset 0 0 0 2px #e7c56b;
+    }
+    .post::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: -8px;
+      height: 10px;
+      border-radius: 3px;
+      background: linear-gradient(#f6e2a8, #b8893a);
+    }
+    .post-l { left: 11%; }
+    .post-r { right: 11%; }
     .lip {
       position: absolute;
-      left: 18%;
-      right: 18%;
-      bottom: 12px;
-      height: 8px;
-      border-radius: 99px;
-      background: linear-gradient(90deg, transparent, #e7c56b, #c44762, #e7c56b, transparent);
-      box-shadow: none;
+      left: 14%;
+      right: 14%;
+      bottom: 14px;
+      height: 10px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #8a6428, #f6e2a8, #8a6428);
     }
     .walker {
       position: absolute;
@@ -1009,7 +1056,7 @@
       balloons: {
         kicker: "Prova 2",
         title: "Scoppia i palloncini",
-        body: "Venti secondi, fino a otto in campo, misure miste. Ogni scoppio vale un punto, massimo 30. L'obiettivo è 25. Le sfere scure con l'anello corallo sono bombe: −3 secondi.",
+        body: "Venti secondi. Ogni palloncino vale un punto, massimo 30. Le bombe sono quelle con la miccia o il grappolo bordeaux: scoppiano tutto e rubano tempo.",
         go: "Via"
       },
       bridge: {
@@ -1040,6 +1087,7 @@
       bridge: "Ponte di vetro",
       simon: "Sequenza colori",
       matrix: "Griglia simboli",
+      recap: "Il conto",
       final: "Verdetto"
     };
 
@@ -1068,6 +1116,8 @@
         matrixClosed: false,
         scores: { quiz: 0, balloons: 0, bridge: 0, simon: 0, matrix: 0 },
         readyKind: "balloons",
+        recapKind: "quiz",
+        blasting: false,
         bridge: [],
         bridgeStep: 0,
         bridgePhase: "preview",
@@ -1189,7 +1239,7 @@
               <div class="inside">
                 <p class="inside-kicker">Dentro il biglietto</p>
                 <div class="rule"><div class="n">1</div><p><strong>Quiz, fino a 40.</strong> Dieci domande. Il primo errore su una domanda brucia 5 punti.</p></div>
-                <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Le bombe rubano tempo.</p></div>
+                <div class="rule"><div class="n">2</div><p><strong>Palloncini, fino a 30.</strong> Venti secondi. Una bomba fa esplodere tutto e ruba tempo.</p></div>
                 <div class="rule"><div class="n">3</div><p><strong>Memoria, fino a 45.</strong> Ponte, xilofono, griglia. Quindici punti a prova, tutto o niente.</p></div>
                 <div class="cliff">Il premio si apre da 98, anche a 99 o 100. Se i punti non bastano più, puoi continuare o ricominciare.</div>
                 <button class="primary" type="button" data-act="start">Inizia la Sfida</button>
@@ -1255,19 +1305,25 @@
         return `
           <div class="qmeta"><span>${preview ? "Memorizza il ponte" : "Attraversa"}</span><span id="countDown">${preview ? "1.5" : (S.bridgeStep + 1) + " / 8"}</span></div>
           <div class="bridge-scene" id="bridgeScene">
-            <div class="track">
-              ${rows.map((i) => {
-                const side = S.bridge[i];
-                const width = 92 - i * 6;
-                const active = !preview && i === S.bridgeStep;
-                const pane = (dir) => {
-                  const lit = preview && side === dir ? " lit" : "";
-                  const current = active ? " current" : "";
-                  return `<button class="pane${lit}${current}" type="button" data-act="side" data-side="${dir}" data-step="${i}" ${active ? "" : "disabled"}></button>`;
-                };
-                return `<div class="pair" style="width:${width}%" data-pair="${i}">${pane("L")}${pane("R")}</div>`;
-              }).join("")}
+            <div class="span3d">
+              <div class="rail" aria-hidden="true"></div>
+              <div class="track">
+                ${rows.map((i) => {
+                  const side = S.bridge[i];
+                  const width = 100 - i * 5;
+                  const active = !preview && i === S.bridgeStep;
+                  const pane = (dir) => {
+                    const lit = preview && side === dir ? " lit" : "";
+                    const current = active ? " current" : "";
+                    return `<button class="pane${lit}${current}" type="button" data-act="side" data-side="${dir}" data-step="${i}" ${active ? "" : "disabled"}></button>`;
+                  };
+                  return `<div class="pair" style="width:${width}%" data-pair="${i}">${pane("L")}${pane("R")}</div>`;
+                }).join("")}
+              </div>
+              <div class="rail" aria-hidden="true"></div>
             </div>
+            <div class="post post-l" aria-hidden="true"></div>
+            <div class="post post-r" aria-hidden="true"></div>
             <div class="lip" id="lip"></div>
             <div class="walker" id="walker" hidden><i></i><b></b></div>
           </div>
@@ -1327,6 +1383,38 @@
             }).join("")}
           </div>
           ${show ? `<p class="note">I simboli si spengono. Poi tocca le sei caselle: quelle scelte diventano rosa.</p>` : `<p class="note">Tocca fino a sei caselle. Il bordo rosa è la tua scelta.</p><button class="primary" id="confirm" type="button" data-act="confirm" ${S.matrixPick.length === 6 ? "" : "disabled"}>Conferma</button>`}
+        `;
+      },
+      recap() {
+        const kind = S.recapKind;
+        const maxes = { quiz: 40, balloons: 30, bridge: 15, simon: 15, matrix: 15 };
+        const order = ["quiz", "balloons", "bridge", "simon", "matrix"];
+        const got = S.scores[kind] || 0;
+        const max = maxes[kind];
+        const left = order.slice(order.indexOf(kind) + 1).reduce((sum, key) => sum + maxes[key], 0);
+        const sum = total();
+        const ceiling = sum + left;
+        const heads = {
+          quiz: ["Fine del quiz", "Le domande sono chiuse"],
+          balloons: ["Fine dei palloncini", "Il tempo è scaduto"],
+          bridge: ["Fine del ponte", got ? "Il ponte è alle spalle" : "Il vetro ha ceduto"],
+          simon: ["Fine dello xilofono", got ? "La frase è completa" : "Una nota è caduta"],
+          matrix: ["Fine della griglia", "Le caselle sono chiuse"]
+        };
+        const [kicker, title] = heads[kind];
+        const detail = kind === "matrix"
+          ? `Simboli giusti: ${S.matrixCorrect} su 6. La prova vale ${got} su ${max}.`
+          : `Questa prova: ${got} su ${max}.`;
+        const warn = ceiling < WIN
+          ? `Anche il resto perfetto arriva a ${ceiling}. Sotto ${WIN} il regalo non si apre.`
+          : `Sei a ${sum}. Il regalo si apre solo da ${WIN} in su.`;
+        return `
+          <p class="kicker">${kicker}</p>
+          <h2 class="q">${title}</h2>
+          <p class="lede">${detail}</p>
+          <div class="total-line"><span>Totale</span><strong>${sum}</strong></div>
+          <p class="nag">${warn}</p>
+          <button class="primary" type="button" data-act="continue">${kind === "matrix" ? "Vai al verdetto" : "Alla prossima prova"}</button>
         `;
       },
       final() {
@@ -1408,10 +1496,7 @@
     function closeQuiz() {
       S.quizClosed = true;
       S.scores.quiz = Math.max(0, 40 - 5 * S.misses);
-      flourish(S.scores.quiz >= 25);
-      S.readyKind = "balloons";
-      S.screen = "ready";
-      paint();
+      showRecap("quiz");
     }
 
     function goReady() {
@@ -1427,21 +1512,48 @@
       balloons = [];
     }
 
+    function balloonArt(kind) {
+      const string = `<path d="M40 96c2 8-6 12 0 14" fill="none" stroke="#8d4538" stroke-width="1.2"/>`;
+      const gloss = `<path d="M28 40c3-10 12-16 18-14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>`;
+      const clock = `<circle cx="40" cy="54" r="12" fill="#fffaf3" stroke="#c6a15a" stroke-width="1.5"/><path d="M40 54 V45 M40 54 L47 58" fill="none" stroke="#2a241c" stroke-width="1.3" stroke-linecap="round"/>`;
+      let body = "";
+      if (kind === "fuse") {
+        body = `<path d="M48 18h7v5h-7z" fill="#5c5348"/><circle cx="62" cy="16" r="4.5" fill="none" stroke="#5c5348" stroke-width="2"/><path d="M52 18c4-8 12-8 14-2" fill="none" stroke="#5c5348" stroke-width="1.5"/>
+          <path d="M40 26c17 0 26 15 26 32 0 20-12 36-26 40C26 94 14 78 14 58 14 41 23 26 40 26z" fill="#f3a0b5"/>${gloss}${clock}`;
+      } else if (kind === "cluster") {
+        body = `<circle cx="30" cy="50" r="13" fill="#9b2d45"/><circle cx="50" cy="44" r="14" fill="#c44762"/><circle cx="40" cy="64" r="13" fill="#7a2036"/><circle cx="58" cy="60" r="10" fill="#e07a8a"/><path d="M50 30l3-8 2 1" stroke="#e7c56b" fill="none" stroke-width="1.4"/><path d="M36 34l2-7" stroke="#e7c56b" stroke-width="1.3"/>`;
+      } else if (kind === "sage") {
+        body = `<path d="M40 24c16 0 26 16 26 34 0 20-12 38-26 42C26 96 14 78 14 58 14 40 24 24 40 24z" fill="#7fa37a"/>${gloss}
+          <circle cx="32" cy="58" r="4" fill="#f4a3b5"/><circle cx="48" cy="50" r="3" fill="#f5c56b"/><path d="M44 66c4 2 8 1 10-2" fill="none" stroke="#e7c56b" stroke-width="1"/>`;
+      } else if (kind === "teal") {
+        body = `<circle cx="40" cy="56" r="24" fill="#2f6f6a"/>${gloss}
+          <circle cx="32" cy="52" r="4" fill="#f4a3b5"/><circle cx="50" cy="62" r="3.5" fill="#f7c2d0"/><path d="M28 66h16" stroke="#e7c56b" stroke-width="1"/>`;
+      } else if (kind === "filigree") {
+        body = `<path d="M40 22c12 0 20 16 20 32 0 22-8 42-20 46-12-4-20-24-20-46 0-16 8-32 20-32z" fill="#6f8f62"/>${gloss}
+          <path d="M40 36c6 6 6 16 0 28c-6-12-6-22 0-28z" fill="none" stroke="#e7c56b" stroke-width="1.2"/><path d="M30 54h20" stroke="#e7c56b" stroke-width="1"/>`;
+      } else if (kind === "gold") {
+        body = `<path d="M40 20c14 2 22 18 18 36-4 20-18 40-18 44-0-4-14-24-18-44-4-18 4-34 18-36z" fill="#e2b656"/>${gloss}${clock}`;
+      } else {
+        body = `<path d="M40 24c17 0 26 15 26 32 0 20-12 36-26 40C26 92 14 76 14 56 14 39 23 24 40 24z" fill="#f3a0b5"/>${gloss}${clock}`;
+      }
+      return `<svg viewBox="0 0 80 112" aria-hidden="true">${body}${string}</svg>`;
+    }
+
     function spawnBalloon(y) {
       const arena = document.getElementById("arena");
       if (!arena) return;
       const bomb = Math.random() < 0.16;
-      const size = bomb ? 58 + Math.random() * 18 : 34 + Math.pow(Math.random(), 1.35) * 70;
-      const tall = Math.round(size * 1.34);
+      const kind = bomb
+        ? (Math.random() < 0.55 ? "fuse" : "cluster")
+        : ["sage", "teal", "filigree", "gold", "clock"][(Math.random() * 5) | 0];
+      const size = bomb ? 62 + Math.random() * 16 : 40 + Math.pow(Math.random(), 1.35) * 58;
+      const tall = Math.round(size * 1.4);
       const el = document.createElement("button");
       el.type = "button";
       el.className = "bal" + (bomb ? " bomb" : "");
       el.style.width = size + "px";
       el.style.height = tall + "px";
-      el.innerHTML = '<span class="body"></span><span class="cord"></span>';
-      el.querySelector(".cord").style.animationDuration = (1.2 + Math.random() * 0.8).toFixed(2) + "s";
-      const colors = ["#ff5a7a", "#f5c56b", "#f3a0b5", "#e07a8a", "#e2b656"];
-      el.style.setProperty("--c", bomb ? "#6e2033" : colors[(Math.random() * colors.length) | 0]);
+      el.innerHTML = balloonArt(kind);
       el.setAttribute("aria-label", bomb ? "Bomba" : "Palloncino");
       const b = {
         el, bomb, size, tall, alive: true,
@@ -1461,7 +1573,32 @@
       b.el.classList.add("popped");
       const el = b.el;
       balloons = balloons.filter((x) => x !== b);
-      wait(120).then(() => el.remove());
+      wait(420).then(() => el.remove());
+    }
+
+    function blastAll() {
+      if (S.blasting || !S.running) return;
+      S.blasting = true;
+      S.timeLeft = Math.max(0, S.timeLeft - 4);
+      tone(70, 0.22, "square", 0.05);
+      document.getElementById("arena")?.classList.add("hit");
+      const list = balloons.filter((b) => b.alive);
+      list.forEach((b, i) => {
+        setTimeout(() => {
+          b.alive = false;
+          b.el.classList.add("blast");
+        }, i * 70);
+      });
+      const epoch = S.epoch;
+      wait(list.length * 70 + 460).then(() => {
+        if (epoch !== S.epoch) return;
+        list.forEach((b) => b.el.remove());
+        balloons = balloons.filter((b) => b.alive && b.el.isConnected);
+        document.getElementById("arena")?.classList.remove("hit");
+        S.blasting = false;
+        hud();
+        if (S.timeLeft <= 0) endBalloons();
+      });
     }
 
     function startBalloons() {
@@ -1486,13 +1623,7 @@
       const b = balloons.find((x) => x.el === target && x.alive);
       if (!b) return;
       if (b.bomb) {
-        S.timeLeft = Math.max(0, S.timeLeft - 3);
-        tone(80, 0.16, "square", 0.045);
-        document.getElementById("arena")?.classList.add("hit");
-        wait(160).then(() => document.getElementById("arena")?.classList.remove("hit"));
-        retire(b);
-        hud();
-        if (S.timeLeft <= 0) endBalloons();
+        blastAll();
         return;
       }
       S.pops += 1;
@@ -1504,19 +1635,22 @@
     function endBalloons() {
       if (S.balloonsClosed) return;
       S.running = false;
+      S.blasting = false;
       S.timeLeft = Math.max(0, S.timeLeft);
       S.balloonsClosed = true;
       S.scores.balloons = Math.min(30, S.pops);
       clearBalloons();
-      flourish(S.scores.balloons >= 15);
-      S.readyKind = "bridge";
-      S.screen = "ready";
-      paint();
+      showRecap("balloons");
     }
 
     function stepBalloons(dt) {
       const arena = document.getElementById("arena");
       if (!arena) return;
+      if (S.blasting) {
+        S.timeLeft = Math.max(0, S.timeLeft - dt);
+        hud();
+        return;
+      }
       S.timeLeft -= dt;
       if (S.timeLeft <= 0) {
         S.timeLeft = 0;
@@ -1583,8 +1717,7 @@
           S.bridgePhase = "dead";
           S.scores.bridge = 0;
           S.bridgeClosed = true;
-          flourish(false);
-          paint();
+          showRecap("bridge");
         });
         return;
       }
@@ -1598,8 +1731,7 @@
           S.scores.bridge = 15;
           S.bridgeClosed = true;
           S.bridgePhase = "clear";
-          flourish(true);
-          paint();
+          showRecap("bridge");
           return;
         }
         document.querySelectorAll(".pane.current").forEach((el) => {
@@ -1684,8 +1816,7 @@
         S.scores.simon = 0;
         S.simonClosed = true;
         tone(100, 0.16, "sawtooth", 0.05);
-        flourish(false);
-        paint();
+        showRecap("simon");
         return;
       }
       S.simonInput += 1;
@@ -1696,8 +1827,7 @@
         S.simonClosed = true;
         S.simonPhase = "clear";
         tone(990, 0.12, "sine", 0.05);
-        flourish(true);
-        paint();
+        showRecap("simon");
       }
     }
 
@@ -1745,24 +1875,52 @@
       S.matrixClosed = true;
       S.matrixPhase = "done";
       tone(S.matrixCorrect === 6 ? 990 : 360, 0.1, "sine", 0.05);
-      flourish(S.matrixCorrect >= 4);
+      showRecap("matrix");
+    }
+
+    function showRecapContinue() {
+      const kind = S.recapKind;
+      if (kind === "matrix") {
+        finish();
+        return;
+      }
+      S.readyKind = { quiz: "balloons", balloons: "bridge", bridge: "simon", simon: "matrix" }[kind];
+      S.screen = "ready";
       paint();
     }
 
-    function flourish(strong) {
+    function showRecap(kind) {
+      S.recapKind = kind;
+      S.screen = "recap";
+      S.lock = false;
+      paint();
+      flourish(kind);
+    }
+
+    function flourish(kind) {
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const look = {
+        quiz: { colors: ["#c44762", "#f5c56b", "#fff6ea", "#8d4538"], shapes: ["square"], n: 130 },
+        balloons: { colors: ["#f3a0b5", "#7fa37a", "#2f6f6a", "#e2b656", "#9b2d45"], shapes: ["circle"], n: 150 },
+        bridge: { colors: ["#e7c56b", "#d7ece4", "#c44762", "#8a6428"], shapes: ["square"], n: 120 },
+        simon: { colors: ["#ff5a7a", "#f5c56b", "#22d3ee", "#3ee0b0"], shapes: ["circle"], n: 130 },
+        matrix: { colors: ["#8d4538", "#f5c56b", "#2fbf71", "#c44762"], shapes: ["square"], n: 120 }
+      }[kind] || { colors: ["#c44762", "#f5c56b"], shapes: ["circle"], n: 80 };
       const burst = () => {
         if (typeof window.confetti !== "function") return;
-        const colors = ["#c44762", "#f5c56b", "#f7c2d0", "#2fbf71", "#fff6ea"];
-        window.confetti({
-          particleCount: strong ? 80 : 26,
-          spread: strong ? 72 : 38,
-          startVelocity: strong ? 34 : 16,
-          origin: { x: 0.5, y: 0.58 },
-          colors,
-          scalar: strong ? 0.9 : 0.7,
+        const fire = (x, y, n) => window.confetti({
+          particleCount: n,
+          spread: 86,
+          startVelocity: 38,
+          origin: { x, y },
+          colors: look.colors,
+          shapes: look.shapes,
+          scalar: 1.05,
           disableForReducedMotion: true
         });
+        fire(0.5, 0.42, look.n);
+        setTimeout(() => fire(0.16, 0.62, Math.round(look.n * 0.6)), 260);
+        setTimeout(() => fire(0.84, 0.58, Math.round(look.n * 0.6)), 520);
       };
       if (typeof window.confetti === "function") burst();
       else {
@@ -1865,6 +2023,7 @@
       else if (act === "cell") toggleCell(Number(btn.dataset.cell));
       else if (act === "confirm") confirmMatrix();
       else if (act === "finish") finish();
+      else if (act === "continue") showRecapContinue();
       else if (act === "reset") hardReset();
     });
 
